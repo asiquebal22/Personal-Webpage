@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explainable SpO2 Estimation | Interactive Paper Walkthrough</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0e14;
+    --panel:#121724;
+    --panel2:#161d2e;
+    --text:#e8ecf3;
+    --muted:#93a0b8;
+    --blue:#58c4dd;
+    --orange:#e07a5f;
+    --yellow:#f2c14e;
+    --green:#7bd88f;
+    --border:#232b3d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.65;
+  }
+  h1,h2,h3{font-weight:700; letter-spacing:-0.01em;}
+  h2{font-size:2rem; color:var(--blue); margin-top:0;}
+  h3{color:var(--yellow); font-size:1.25rem;}
+  a{color:var(--blue);}
+  .container{max-width:980px; margin:0 auto; padding:0 24px;}
+  code, pre{font-family:'Consolas', monospace; background:#0f1420; padding:2px 6px; border-radius:4px; color:var(--green);}
+
+  /* progress bar */
+  #progress{
+    position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--blue),var(--orange));
+    width:0%; z-index:1000; transition:width .1s;
+  }
+
+  /* nav */
+  nav{
+    position:sticky; top:4px; z-index:999; backdrop-filter:blur(8px);
+    background:rgba(11,14,20,0.85); border-bottom:1px solid var(--border);
+    display:flex; overflow-x:auto; padding:10px 16px; gap:18px;
+  }
+  nav a{
+    color:var(--muted); text-decoration:none; font-size:0.85rem; white-space:nowrap;
+    padding:6px 10px; border-radius:20px; transition:all .2s;
+  }
+  nav a.active, nav a:hover{color:var(--bg); background:var(--blue);}
+
+  section{padding:90px 0; border-bottom:1px solid var(--border);}
+  section:last-of-type{border-bottom:none;}
+
+  .hero{
+    text-align:center; padding:120px 0 80px;
+  }
+  .hero h1{
+    font-size:2.6rem; max-width:760px; margin:0 auto 14px;
+    background:linear-gradient(90deg,var(--blue),var(--orange));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.sub{color:var(--muted); max-width:640px; margin:0 auto; font-size:1.1rem;}
+  .authors{margin-top:22px; color:var(--muted); font-size:0.9rem;}
+
+  .wave-wrap{margin:50px auto 0; max-width:700px;}
+  svg#ppgWave path{
+    fill:none; stroke:var(--blue); stroke-width:3;
+    stroke-dasharray:2000; stroke-dashoffset:2000;
+    animation:draw 3.5s ease-in-out forwards, glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes draw{ to{stroke-dashoffset:0;} }
+  @keyframes glow{ from{filter:drop-shadow(0 0 2px var(--blue));} to{filter:drop-shadow(0 0 10px var(--orange));} }
+
+  .fade-in{opacity:0; transform:translateY(24px); transition:all .7s ease;}
+  .fade-in.visible{opacity:1; transform:translateY(0);}
+
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:24px; margin:18px 0;
+  }
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;}
+  @media (max-width:760px){ .grid2, .grid3{grid-template-columns:1fr;} }
+
+  .pill{
+    display:inline-block; background:var(--panel2); border:1px solid var(--border);
+    padding:4px 12px; border-radius:20px; font-size:0.78rem; color:var(--yellow); margin-bottom:10px;
+  }
+
+  .stat-box{
+    text-align:center; background:var(--panel2); border-radius:12px; padding:18px; border:1px solid var(--border);
+  }
+  .stat-box .num{font-size:2rem; font-weight:800; color:var(--orange);}
+  .stat-box .lbl{color:var(--muted); font-size:0.85rem;}
+
+  table{width:100%; border-collapse:collapse; font-size:0.92rem;}
+  th,td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:left;}
+  th{color:var(--blue);}
+  tr.highlight td{background:rgba(123,216,143,0.08); color:var(--green); font-weight:600;}
+
+  .flow{display:flex; align-items:center; flex-wrap:wrap; gap:8px; justify-content:center; margin:24px 0;}
+  .flow .step{
+    background:var(--panel2); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; font-size:0.85rem; text-align:center; min-width:120px;
+  }
+  .flow .arrow{color:var(--muted); font-size:1.3rem;}
+
+  .controls{display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin:16px 0;}
+  .controls label{font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;}
+  input[type=range]{width:220px; accent-color:var(--orange);}
+  button.toggle{
+    background:var(--panel2); color:var(--text); border:1px solid var(--blue); border-radius:8px;
+    padding:8px 16px; cursor:pointer; font-size:0.85rem; transition:all .2s;
+  }
+  button.toggle.active{background:var(--blue); color:#0b0e14;}
+
+  .note{
+    font-size:0.82rem; color:var(--muted); border-left:3px solid var(--orange); padding-left:12px; margin-top:10px;
+  }
+  .chart-wrap{position:relative; height:340px;}
+  canvas{max-width:100%;}
+
+  .shapley-players{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
+  .player-box{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; flex:1; min-width:150px;}
+  .player-box .val{font-size:1.4rem; font-weight:700;}
+
+  footer{text-align:center; padding:50px 0; color:var(--muted); font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav id="navbar">
+  <a href="#hero">Home</a>
+  <a href="#why">Why It Matters</a>
+  <a href="#problem">The Problem</a>
+  <a href="#framework">The Framework</a>
+  <a href="#device">The Device</a>
+  <a href="#pipeline">Signal Pipeline</a>
+  <a href="#clustering">Clustering</a>
+  <a href="#shap">SHAP / XAI</a>
+  <a href="#results">Results</a>
+  <a href="#takeaways">Takeaways</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="hero">
+  <div class="container">
+    <span class="pill">Interactive Walkthrough · Artificial Intelligence in Medicine (2023)</span>
+    <h1>Enhanced SpO2 Estimation Using Explainable Machine Learning and Neck Photoplethysmography</h1>
+    <p class="sub">A wearable pillow reads blood oxygen from your neck. The catch: everyone's skin, neck, and sensor settings are different. This paper builds a system that automatically figures out <em>which device settings work for which people</em> — and explains its own reasoning.</p>
+    <p class="authors">Zhong, Jatav, Afrin, Shivaram, Bukkapatnam — Texas A&amp;M University</p>
+    <div class="wave-wrap">
+      <svg id="ppgWave" viewBox="0 0 700 120" width="100%" height="120">
+        <path d="M0,60 L60,60 C80,60 80,20 100,20 C120,20 120,100 140,100 C155,100 155,40 170,40 L230,40
+                 C250,40 250,60 270,60 L330,60 C350,60 350,20 370,20 C390,20 390,100 410,100 C425,100 425,40 440,40 L500,40
+                 C520,40 520,60 540,60 L700,60"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT MATTERS -->
+<section id="why">
+  <div class="container fade-in">
+    <h2>Why SpO2, and why at the neck?</h2>
+    <p>SpO2 is the percentage of your hemoglobin that's carrying oxygen. Healthy adults sit above ~95%; sustained drops can signal serious problems.</p>
+    <div class="grid3">
+      <div class="stat-box"><div class="num">30M</div><div class="lbl">U.S. adults affected by sleep apnea</div></div>
+      <div class="stat-box"><div class="num">&#36;150B</div><div class="lbl">estimated annual cost of sleep apnea</div></div>
+      <div class="stat-box"><div class="num">95%</div><div class="lbl">typical healthy SpO2 threshold</div></div>
+    </div>
+    <p style="margin-top:20px;">Finger/earlobe pulse oximeters (transmission-based) are accurate but awkward for continuous, long-term, at-home wear. <strong>Reflectance</strong> sensors can be placed almost anywhere — like a pillow around your neck — but they're more sensitive to skin tone, hair, fat deposits, and sensor settings. That trade-off is the entire motivation for this paper.</p>
+  </div>
+</section>
+
+<!-- THE PROBLEM -->
+<section id="problem">
+  <div class="container fade-in">
+    <h2>The core problem: one-size-fits-all doesn't fit</h2>
+    <p>A single "universal" SpO2 model trained on average data tends to fail on people whose signals look different — different skin color, neck fat, hair density, or even a different sensor brightness setting. Prior work confirmed this:</p>
+    <div class="card">
+      <ul>
+        <li>Classification-based SpO2 models on 610 patients <strong>overfit</strong> and generalized poorly.</li>
+        <li>Regression models on finger/wrist/forehead PPG (28 patients) had test MAE ranging <strong>1.81%–3.18%</strong> — wildly different across patients.</li>
+        <li>Skin tone, obesity, age, and gender change the optical properties of skin/vessels, directly corrupting PPG signals.</li>
+      </ul>
+      <p style="margin-bottom:0;">Instead of throwing out "bad" signals or forcing one model on everyone, this paper asks a different question:</p>
+      <p style="color:var(--yellow); font-weight:600; margin-bottom:0;">"For each device setting, which subgroup of people does it actually work well for — and can a machine explain why?"</p>
+    </div>
+  </div>
+</section>
+
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="container fade-in">
+    <h2>The general framework</h2>
+    <p>The proposed solution is a 3-phase framework for building personalized wearables, applicable beyond just SpO2:</p>
+    <div class="flow">
+      <div class="step" style="border-color:var(--blue);">🧪 <strong>Training Phase</strong><br>Cluster users by biometrics + signals; train a model per cluster per setting</div>
+      <div class="arrow">→</div>
+      <div class="step" style="border-color:var(--green);">✅ <strong>Operation Phase</strong><br>New user is matched to a cluster via inclusion/exclusion rules → gets the right setting + model</div>
+      <div class="arrow">→</div>
+      <div class="step" style="border-color:var(--yellow);">🔁 <strong>Altering Phase</strong><br>Periodic recalibration vs. gold standard; XAI + domain experts refine the criteria over time</div>
+    </div>
+    <div class="card">
+      <h3>What are "inclusion-exclusion criteria"?</h3>
+      <p style="margin-bottom:0;">Simple rule chains like:</p>
+      <pre>IF approximate_entropy > 0.42
+  AND autocorrelation_variance < 0.15
+    THEN → include in Cluster A → use "Brachiocephalic-IR-15" setting</pre>
+      <p style="margin-bottom:0;">They're built <em>automatically</em> from clustering + SHAP, instead of being hand-designed by a clinician.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEVICE -->
+<section id="device">
+  <div class="container fade-in">
+    <h2>The device: "SleepEaze"</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>What it is</h3>
+        <p>A patent-pending pillow-based wearable with a MAX30105 reflectance sensor embedded in the neck-support area, plus a therapeutic massager. It measures green, red, and IR LED reflectance over the <strong>brachiocephalic</strong> and <strong>carotid</strong> arteries — non-standard sites, unlike a finger clip.</p>
+      </div>
+      <div class="card">
+        <h3>Experiment scale</h3>
+        <ul style="margin-bottom:0;">
+          <li><strong>33</strong> human subjects</li>
+          <li><strong>80</strong> sensor settings per subject (5-factor full factorial: 2 locations × 2 LED types × 5 brightness levels × 2 sampling rates × 2 pulse widths)</li>
+          <li>Ground truth SpO2 from a Contec CMS50E finger oximeter (range 90–100%)</li>
+          <li>IRB-approved, Texas A&M, data collected over 1 year</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="container fade-in">
+    <h2>Turning raw light into features</h2>
+    <p>Each 1600-point raw signal goes through a fairly standard biomedical signal pipeline before any modeling happens:</p>
+    <div class="flow">
+      <div class="step">Trim edges<br><span style="color:var(--muted)">remove first/last 100 pts</span></div>
+      <div class="arrow">→</div>
+      <div class="step">Baseline correction<br><span style="color:var(--muted)">AsLS algorithm</span></div>
+      <div class="arrow">→</div>
+      <div class="step">Feature extraction<br><span style="color:var(--muted)">tsfresh → 794 features</span></div>
+      <div class="arrow">→</div>
+      <div class="step">Add biometrics<br><span style="color:var(--muted)">13 dummy variables</span></div>
+      <div class="arrow">→</div>
+      <div class="step">Clean + standardize<br><span style="color:var(--muted)">drop zero-var / corr>0.7</span></div>
+    </div>
+
+    <div class="card">
+      <h3>Try it: Baseline Wander Correction</h3>
+      <p>Raw reflectance signals slowly drift due to breathing and movement — this is "baseline wander." The paper uses an <strong>Asymmetric Least Squares (AsLS)</strong> filter to flatten the drift while keeping the pulses. Toggle below to see the idea (illustrative synthetic signal, not the paper's raw data):</p>
+      <div class="controls">
+        <button class="toggle active" id="btnBefore">Before correction</button>
+        <button class="toggle" id="btnAfter">After correction</button>
+      </div>
+      <div class="chart-wrap" style="height:260px;">
+        <canvas id="baselineChart"></canvas>
+      </div>
+      <p class="note">Illustrative demo signal generated in-browser to visualize the concept of baseline correction described in Section 4.2.1 — not the paper's actual recorded waveform.</p>
+    </div>
+
+    <div class="card">
+      <h3>794 → ~240–400 features</h3>
+      <p style="margin-bottom:0;">Using the <code>tsfresh</code> library, each signal chunk is converted into features capturing:</p>
+      <div class="grid2" style="margin-top:12px;">
+        <ul>
+          <li><strong>Energy-based:</strong> FFT coefficients, CWT coefficients, signal energy</li>
+          <li><strong>Entropy-based:</strong> approximate entropy</li>
+        </ul>
+        <ul>
+          <li><strong>Dynamic-systems-based:</strong> autoregressive coefficients, partial autocorrelation</li>
+          <li><strong>Statistical:</strong> min, max, mean, variance</li>
+        </ul>
+      </div>
+      <p style="margin-bottom:0;">Plus <strong>13 biometric dummy variables</strong>: gender, sitting/standing, neck fat deposits, age bracket, skin color, hair density. These help form clusters but are <em>removed</em> before the SpO2 regression itself, so predictions stay independent of them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTERING -->
+<section id="clustering">
+  <div class="container fade-in">
+    <h2>Finding natural subgroups: K-means clustering</h2>
+    <p>For every one of the 80 settings, subjects are grouped by K-means using their signal + biometric features. To pick the number of clusters K, three standard indicators are used:</p>
+    <div class="grid3">
+      <div class="card"><h3>Silhouette score</h3><p style="margin-bottom:0; font-size:0.85rem;">Higher = better separated clusters. Paper's average was maximized at <strong>K=2</strong>.</p></div>
+      <div class="card"><h3>Calinski–Harabasz (CH)</h3><p style="margin-bottom:0; font-size:0.85rem;">Higher = better. Also maximized at <strong>K=2</strong>.</p></div>
+      <div class="card"><h3>Davies–Bouldin (DB)</h3><p style="margin-bottom:0; font-size:0.85rem;">Lower = better. Minimized at <strong>K=20</strong> — but that means tiny, impractical clusters.</p></div>
+    </div>
+
+    <div class="card">
+      <h3>Slide K and see the trade-off</h3>
+      <div class="controls">
+        <div>
+          <label for="kSlider">K (number of clusters): <strong id="kVal">2</strong></label>
+          <input type="range" id="kSlider" min="2" max="20" value="2" step="1">
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="kmeansChart"></canvas>
+      </div>
+      <p id="kExplain" style="color:var(--yellow); font-weight:500;"></p>
+      <p class="note">Curves are illustrative reconstructions matching the qualitative trends reported in Section 5.3 / Figure 7 (Silhouette &amp; CH maximized at K=2; DB index minimized at K=20). Exact plotted values were not published in the extracted text, so this recreates the shape, not the raw numbers.</p>
+    </div>
+
+    <div class="card">
+      <p style="margin-bottom:0;">Despite K=20 minimizing DB index, the authors chose <strong>K=2</strong> — the statistically-favored choice by two of three metrics, and practically important because it keeps the largest cluster big enough (<strong>18–32 subjects</strong>) to actually train and validate a regression model on. This is a good example of statistical optimality vs. practical usability.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHAP -->
+<section id="shap">
+  <div class="container fade-in">
+    <h2>Opening the black box: SHAP</h2>
+    <p>K-means clusters and random forest predictions are both "black boxes" — they group/predict, but don't say <em>why</em>. The paper uses <strong>SHAP (SHapley Additive exPlanations)</strong> to answer "why," which is also used to derive the human-readable inclusion-exclusion criteria.</p>
+
+    <div class="card">
+      <h3>Build the intuition: the Shapley value game</h3>
+      <p>SHAP comes from cooperative game theory. Imagine 3 "features" (players) that jointly produce a prediction (payoff). The Shapley value fairly splits credit for the outcome across every possible order in which features could "join." Play with the sliders — the bars always sum to the total value, exactly like Eq. (5)–(6) in the paper.</p>
+
+      <div class="shapley-players">
+        <div class="player-box">
+          <label>Feature A alone contributes</label>
+          <input type="range" id="valA" min="0" max="10" value="4" step="0.5">
+          <div class="val" id="valAout" style="color:var(--blue);">4.0</div>
+        </div>
+        <div class="player-box">
+          <label>Feature B alone contributes</label>
+          <input type="range" id="valB" min="0" max="10" value="3" step="0.5">
+          <div class="val" id="valBout" style="color:var(--orange);">3.0</div>
+        </div>
+        <div class="player-box">
+          <label>Feature C alone contributes</label>
+          <input type="range" id="valC" min="0" max="10" value="2" step="0.5">
+          <div class="val" id="valCout" style="color:var(--green);">2.0</div>
+        </div>
+      </div>
+      <div class="shapley-players">
+        <div class="player-box">
+          <label>Synergy: A + B interact</label>
+          <input type="range" id="synAB" min="-5" max="5" value="2" step="0.5">
+          <div class="val" id="synABout">2.0</div>
+        </div>
+        <div class="player-box">
+          <label>Synergy: A + C interact</label>
+          <input type="range" id="synAC" min="-5" max="5" value="0" step="0.5">
+          <div class="val" id="synACout">0.0</div>
+        </div>
+        <div class="player-box">
+          <label>Synergy: B + C interact</label>
+          <input type="range" id="synBC" min="-5" max="5" value="1" step="0.5">
+          <div class="val" id="synBCout">1.0</div>
+        </div>
+      </div>
+
+      <div class="chart-wrap" style="height:260px;">
+        <canvas id="shapleyChart"></canvas>
+      </div>
+      <p id="shapleyTotal" style="text-align:center; color:var(--muted);"></p>
+      <p class="note">This mirrors Eq. (5)–(6): each feature's Shapley value is its average marginal contribution across all possible "coalitions" of other features, and the values always add up exactly to the model's total output (the "efficiency" property). In the real paper this same math is applied — via the fast <strong>Tree-SHAP</strong> algorithm — to a random forest's actual predictions and to a surrogate classifier standing in for K-means clusters.</p>
+    </div>
+
+    <div class="card">
+      <h3>How do you SHAP an unsupervised clustering model?</h3>
+      <p>SHAP needs a supervised model. Since K-means has no "prediction function" to explain, the authors trained a <strong>surrogate classifier</strong> (a balanced random forest) to distinguish the largest cluster (234 samples / 18 subjects) from the smaller one (195 samples / 15 subjects) — using the same 248 features. It reached <strong>100% train and test accuracy</strong>, meaning it faithfully mimicked the clustering decision, so it's safe to explain <em>that</em> classifier with SHAP instead.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Top features that decide cluster membership</h3>
+        <div class="chart-wrap" style="height:380px;">
+          <canvas id="clusterFeatChart"></canvas>
+        </div>
+        <p class="note">Bar lengths are illustrative (decreasing rank order) reconstructing the order reported for the "Brachiocephalic-IR-15" setting (Fig. 10) — the paper reports ranks, not the exact importance magnitudes.</p>
+      </div>
+      <div class="card">
+        <h3>Top features that drive the SpO2 estimate</h3>
+        <div class="chart-wrap" style="height:380px;">
+          <canvas id="regFeatChart"></canvas>
+        </div>
+        <p class="note">Same caveat — order matches Fig. 12; magnitudes are illustrative. Notably, biometric features (age, skin color, etc.) barely show up in either list — signal shape mattered more than who the person was.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p style="margin-bottom:0;"><strong>Key insight:</strong> higher approximate entropy tended to push a subject into the largest (best-performing) cluster; higher kurtosis of FFT magnitudes tended to push the SpO2 estimate <em>up</em> — hinting that a dominant frequency-energy spike in the PPG might physiologically correlate with higher blood oxygenation. The authors flag this as a hypothesis for physiologists to verify, not a settled fact.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="container fade-in">
+    <h2>Does it actually work? Results</h2>
+
+    <div class="grid3">
+      <div class="stat-box"><div class="num">≤1.7%</div><div class="lbl">Max Absolute Error (best setting: 1.46%)</div></div>
+      <div class="stat-box"><div class="num">≤0.9%</div><div class="lbl">RMSE (best setting: 0.60%)</div></div>
+      <div class="stat-box"><div class="num">16%</div><div class="lbl">relative RMSE reduction vs. empirical formula &amp; plain model</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Table 1 — Method comparison (Test error, %)</h3>
+      <div class="chart-wrap">
+        <canvas id="table1Chart"></canvas>
+      </div>
+      <p class="note">"Our approach without clustering" = plain random forest on all subjects together. "Our approach" = clustering + per-cluster random forest. Linear calibration [22] reported an MAE <em>range</em> of 1.81–3.18% (varying by patient) and isn't on this RMSE chart since no single RMSE was reported.</p>
+    </div>
+
+    <div class="card">
+      <h3>Table 2 — The 4 best device settings found</h3>
+      <table>
+        <thead><tr><th>Setting</th><th>Train MaAE</th><th>Train RMSE</th><th>Test MaAE</th><th>Test RMSE</th></tr></thead>
+        <tbody>
+          <tr><td>Brachiocephalic-Red-5</td><td>1.22</td><td>0.35</td><td>1.65</td><td>0.79</td></tr>
+          <tr><td>Brachiocephalic-IR-5</td><td>0.89</td><td>0.30</td><td>1.46</td><td>0.76</td></tr>
+          <tr><td>Brachiocephalic-Red-9</td><td>1.11</td><td>0.36</td><td>1.70</td><td>0.89</td></tr>
+          <tr class="highlight"><td>Brachiocephalic-IR-15 ★ lowest RMSE</td><td>1.28</td><td>0.31</td><td>1.61</td><td>0.60</td></tr>
+        </tbody>
+      </table>
+      <p class="note">All four best settings are at the <strong>brachiocephalic</strong> location under relatively <strong>high LED brightness</strong> — a pattern the authors call out explicitly. (Values in %.)</p>
+    </div>
+
+    <div class="card">
+      <h3>Figure 8 — Clustering's effect on error (median Test RMSE, %)</h3>
+      <div class="chart-wrap">
+        <canvas id="fig8Chart"></canvas>
+      </div>
+      <p class="note">Exact medians reported in the text: Brachiocephalic 2.61% → 2.08%; Carotid 2.37% → 1.87%, after subject clustering. Brachiocephalic benefited more than Carotid.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="container fade-in">
+    <h2>Takeaways</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>What worked</h3>
+        <ul style="margin-bottom:0;">
+          <li>Automated, no-manual-labeling subgroup discovery via clustering</li>
+          <li>SHAP made both the clusters <em>and</em> the regression model interpretable</li>
+          <li>Signal features mattered more than biometrics for the best setting</li>
+          <li>16% RMSE / 14–18% MAE improvement over baselines</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Limitations &amp; future work</h3>
+        <ul style="margin-bottom:0;">
+          <li>Only the <em>largest</em> cluster per setting was deeply analyzed — smaller clusters weren't fully evaluated</li>
+          <li>Exclusion from one setting doesn't mean exclusion from the device — another setting may suit that user</li>
+          <li>Feature interaction effects and extension to other wearable sensors are open directions</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <p style="margin-bottom:0; text-align:center; font-style:italic; color:var(--muted);">"The primary purpose of the criteria is not to exclude users from the device, but to match prospective users with the settings and prediction models that will actually work for them."</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built as an interactive companion to Zhong et al., "Enhanced SpO2 Estimation Using Explainable Machine Learning and Neck Photoplethysmography," Artificial Intelligence in Medicine (2023).<br>
+  Reconstructed charts are clearly noted; exact paper values are used wherever available.
+</footer>
+
+<script>
+// ---------- Scroll progress + nav highlighting ----------
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  progress.style.width = pct + '%';
+});
+
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('nav a');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      navLinks.forEach(a=>a.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#&#36;{e.target.id}"]`);
+      if(link) link.classList.add('active');
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+sections.forEach(s=>obs.observe(s));
+
+// ---------- Chart.js global defaults ----------
+Chart.defaults.color = '#93a0b8';
+Chart.defaults.borderColor = '#232b3d';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+// ---------- Baseline correction demo ----------
+function genBefore(n){
+  const arr=[];
+  for(let i=0;i<n;i++){
+    const drift = 20*Math.sin(i/40) + 0.15*i;
+    const pulse = 8*Math.sin(i/3) * (Math.sin(i/3)>0?1:0.2);
+    arr.push(drift+pulse+100+ (Math.random()-0.5)*2);
+  }
+  return arr;
+}
+function genAfter(before){
+  // simple moving-average based detrend as a stand-in for AsLS
+  const n=before.length, win=25, out=[];
+  for(let i=0;i<n;i++){
+    let s=0,c=0;
+    for(let j=Math.max(0,i-win); j<Math.min(n,i+win); j++){s+=before[j];c++;}
+    out.push(before[i]-(s/c));
+  }
+  return out;
+}
+const N=200;
+const beforeData = genBefore(N);
+const afterData = genAfter(beforeData);
+const labels = Array.from({length:N}, (_,i)=>i);
+
+const baselineCtx = document.getElementById('baselineChart').getContext('2d');
+const baselineChart = new Chart(baselineCtx, {
+  type:'line',
+  data:{
+    labels,
+    datasets:[{
+      label:'Before correction',
+      data: beforeData,
+      borderColor:'#58c4dd',
+      backgroundColor:'transparent',
+      pointRadius:0,
+      borderWidth:2,
+      tension:0.1
+    }]
+  },
+  options:{
+    animation:{duration:600},
+    plugins:{legend:{display:false}},
+    scales:{ x:{title:{display:true,text:'Time index'}}, y:{title:{display:true,text:'Signal (a.u.)'}} }
+  }
+});
+document.getElementById('btnBefore').addEventListener('click', ()=>{
+  document.getElementById('btnBefore').classList.add('active');
+  document.getElementById('btnAfter').classList.remove('active');
+  baselineChart.data.datasets[0] = {label:'Before correction', data: beforeData, borderColor:'#58c4dd', backgroundColor:'transparent', pointRadius:0, borderWidth:2, tension:0.1};
+  baselineChart.update();
+});
+document.getElementById('btnAfter').addEventListener('click', ()=>{
+  document.getElementById('btnAfter').classList.add('active');
+  document.getElementById('btnBefore').classList.remove('active');
+  baselineChart.data.datasets[0] = {label:'After correction', data: afterData, borderColor:'#e07a5f', backgroundColor:'transparent', pointRadius:0, borderWidth:2, tension:0.1};
+  baselineChart.update();
+});
+
+// ---------- K-means indicator demo ----------
+const Ks = Array.from({length:19}, (_,i)=>i+2); // 2..20
+const silhouette = [1.00,0.72,0.58,0.47,0.39,0.33,0.29,0.25,0.22,0.19,0.17,0.15,0.14,0.12,0.11,0.10,0.09,0.08,0.07];
+const chScore    = [1.00,0.68,0.50,0.38,0.30,0.24,0.20,0.17,0.14,0.12,0.11,0.09,0.08,0.07,0.06,0.06,0.05,0.05,0.04];
+const dbIndex    = [0.45,0.62,0.78,0.97,0.90,0.80,0.71,0.64,0.58,0.53,0.49,0.45,0.42,0.39,0.36,0.33,0.30,0.27,0.24];
+
+const kCtx = document.getElementById('kmeansChart').getContext('2d');
+const kChart = new Chart(kCtx, {
+  type:'line',
+  data:{
+    labels: Ks,
+    datasets:[
+      {label:'Silhouette score (↑ better)', data:silhouette, borderColor:'#7bd88f', backgroundColor:'transparent', pointRadius:0, borderWidth:2},
+      {label:'CH score (↑ better)', data:chScore, borderColor:'#e07a5f', backgroundColor:'transparent', pointRadius:0, borderWidth:2},
+      {label:'DB index (↓ better)', data:dbIndex, borderColor:'#58c4dd', backgroundColor:'transparent', pointRadius:0, borderWidth:2}
+    ]
+  },
+  options:{
+    plugins:{legend:{position:'top'}},
+    scales:{ x:{title:{display:true,text:'K (number of clusters)'}}, y:{title:{display:true,text:'Normalized indicator value (0–1)'}, min:0, max:1.05} }
+  }
+});
+
+const kSlider = document.getElementById('kSlider');
+const kVal = document.getElementById('kVal');
+const kExplain = document.getElementById('kExplain');
+function updateKLine(k){
+  kVal.textContent = k;
+  const idx = k-2;
+  kChart.data.datasets.forEach(ds=>{ ds.pointRadius = ds.data.map((_,i)=> i===idx?7:0); });
+  kChart.update();
+  let msg = '';
+  if(k===2) msg = "K = 2: favored by Silhouette AND CH score — and chosen by the authors for large, practical clusters (18–32 subjects each).";
+  else if(k===20) msg = "K = 20: favored by DB index — but clusters this fine-grained leave too few subjects per group to train a reliable model.";
+  else msg = `K = &#36;{k}: not optimal by any single indicator — illustrates why choosing K purely by statistics can conflict with practical needs.`;
+  kExplain.textContent = msg;
+}
+kSlider.addEventListener('input', e=> updateKLine(parseInt(e.target.value)));
+updateKLine(2);
+
+// ---------- Shapley value playground ----------
+const ids = ['valA','valB','valC','synAB','synAC','synBC'];
+function readVals(){
+  return ids.map(id=>parseFloat(document.getElementById(id).value));
+}
+ids.forEach(id=>{
+  document.getElementById(id).addEventListener('input', ()=>{
+    document.getElementById(id+'out').textContent = parseFloat(document.getElementById(id).value).toFixed(1);
+    computeShapley();
+  });
+});
+
+const shapleyCtx = document.getElementById('shapleyChart').getContext('2d');
+const shapleyChart = new Chart(shapleyCtx, {
+  type:'bar',
+  data:{
+    labels:['Feature A','Feature B','Feature C'],
+    datasets:[{ label:'Shapley value', data:[0,0,0], backgroundColor:['#58c4dd','#e07a5f','#7bd88f'] }]
+  },
+  options:{
+    plugins:{legend:{display:false}},
+    scales:{ y:{title:{display:true,text:'Credit assigned'}} }
+  }
+});
+
+function coalitionValue(S, a,b,c,ab,ac,bc){
+  // S is array of booleans [hasA,hasB,hasC]
+  let v=0;
+  if(S[0]) v+=a;
+  if(S[1]) v+=b;
+  if(S[2]) v+=c;
+  if(S[0]&&S[1]) v+=ab;
+  if(S[0]&&S[2]) v+=ac;
+  if(S[1]&&S[2]) v+=bc;
+  return v;
+}
+
+function computeShapley(){
+  const [a,b,c,ab,ac,bc] = readVals();
+  // brute force over 6 permutations of {A,B,C}
+  const perms = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+  const phi = [0,0,0];
+  perms.forEach(order=>{
+    let S=[false,false,false];
+    let prevVal = coalitionValue(S,a,b,c,ab,ac,bc);
+    order.forEach(playerIdx=>{
+      let newS = S.slice(); newS[playerIdx]=true;
+      const newVal = coalitionValue(newS,a,b,c,ab,ac,bc);
+      phi[playerIdx] += (newVal - prevVal);
+      S = newS; prevVal = newVal;
+    });
+  });
+  const shap = phi.map(x=>x/6);
+  shapleyChart.data.datasets[0].data = shap;
+  shapleyChart.update();
+  const total = shap.reduce((s,x)=>s+x,0);
+  const trueTotal = coalitionValue([true,true,true],a,b,c,ab,ac,bc);
+  document.getElementById('shapleyTotal').textContent =
+    `Sum of Shapley values = ${total.toFixed(2)}  ✓ matches total model output v({A,B,C}) = ${trueTotal.toFixed(2)}`;
+}
+computeShapley();
+
+// ---------- Cluster feature ranking (illustrative) ----------
+const clusterFeatLabels = [
+  "Trend of minima of signal chunks",
+  "Variance of autocorrelation coeffs",
+  "Energy",
+  "Largest root, Friedrich poly (ord.3)",
+  "Mean of autocorrelation coeffs",
+  "Friedrich poly 4th coeff (ord.3)",
+  "Approx. entropy (run=2, filt=0.1)",
+  "Kurtosis",
+  "11th CWT coeff (Ricker, w=10)",
+  "Partial autocorrelation, lag 5",
+  "Friedrich poly 2nd coeff (ord.3)",
+  "Approx. entropy (run=2, filt=0.3)",
+  "Kurtosis of FFT magnitudes",
+  "Coefficient of variation",
+  "88th FFT coeff (imaginary part)"
+];
+const clusterFeatVals = clusterFeatLabels.map((_,i)=> 100 - i*5.8);
+
+new Chart(document.getElementById('clusterFeatChart').getContext('2d'), {
+  type:'bar',
+  data:{ labels: clusterFeatLabels, datasets:[{ data: clusterFeatVals, backgroundColor:'#58c4dd' }] },
+  options:{
+    indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{ x:{title:{display:true,text:'Relative global importance (illustrative)'}} }
+  }
+});
+
+// ---------- Regression feature ranking (illustrative) ----------
+const regFeatLabels = [
+  "Partial autocorrelation, lag 3",
+  "Kurtosis of FFT magnitudes",
+  "Largest root, Friedrich poly (ord.3)",
+  "Approx. entropy (run=2, filt=0.3)",
+  "Variance of autocorrelation coeffs",
+  "Friedrich poly 4th coeff (ord.3)",
+  "5th autoregressive coeff (maxLag=10)",
+  "Partial autocorrelation, lag 4",
+  "Energy",
+  "Trend of minima of signal chunks"
+];
+const regFeatVals = regFeatLabels.map((_,i)=> 100 - i*8);
+
+new Chart(document.getElementById('regFeatChart').getContext('2d'), {
+  type:'bar',
+  data:{ labels: regFeatLabels, datasets:[{ data: regFeatVals, backgroundColor:'#e07a5f' }] },
+  options:{
+    indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{ x:{title:{display:true,text:'Relative global importance (illustrative)'}} }
+  }
+});
+
+// ---------- Table 1 chart (exact values) ----------
+new Chart(document.getElementById('table1Chart').getContext('2d'), {
+  type:'bar',
+  data:{
+    labels:['Semi-supervised [21]','Linear regression [48]','Empirical formula','Ours (no clustering)','Ours (with clustering)'],
+    datasets:[
+      { label:'RMSE (%)', data:[2.91,3.00,1.61,1.61,1.35], backgroundColor:'#58c4dd' },
+      { label:'MAE (%)', data:[null,null,1.36,1.31,1.12], backgroundColor:'#e07a5f' }
+    ]
+  },
+  options:{
+    plugins:{legend:{position:'top'}},
+    scales:{ y:{title:{display:true,text:'Test error (%)'}, beginAtZero:true} }
+  }
+});
+
+// ---------- Figure 8 chart (exact medians) ----------
+new Chart(document.getElementById('fig8Chart').getContext('2d'), {
+  type:'bar',
+  data:{
+    labels:['Before clustering','After clustering'],
+    datasets:[
+      { label:'Brachiocephalic', data:[2.61,2.08], backgroundColor:'#58c4dd' },
+      { label:'Carotid', data:[2.37,1.87], backgroundColor:'#e07a5f' }
+    ]
+  },
+  options:{
+    plugins:{legend:{position:'top'}},
+    scales:{ y:{title:{display:true,text:'Median test RMSE (%)'}, beginAtZero:true} }
+  }
+});
+</script>
+</body>
+</html>
