@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ashif S. Iquebal | Arizona State University</title>
+<meta name="description" content="Ashif S. Iquebal — Associate Professor, School of Computing and Augmented Intelligence, Arizona State University. AI/ML for scientific discovery, generative modeling, causal inference." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfaf9; --surface:#ffffff; --text:#1a1a1c; --muted:#5f6168;
+  --line:#e6e3df; --accent:#8c1d40;      /* ASU maroon */
+  --accent-2:#ffc627;                    /* ASU gold */
+  --chip:#f3f0ec; --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05);
+}
+html[data-theme="dark"]{
+  --bg:#121316; --surface:#1a1c20; --text:#eceded; --muted:#a2a6ad;
+  --line:#2b2e34; --accent:#e2557f; --accent-2:#ffc627;
+  --chip:#23262b; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1040px; margin:0 auto; padding:0 22px}
+
+/* ---------- Header ---------- */
+header.site{
+  border-bottom:1px solid var(--line); background:var(--surface);
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(8px);
+}
+.bar{display:flex; align-items:center; gap:16px; padding:14px 0; flex-wrap:wrap}
+.brand{font-family:Newsreader,Georgia,serif; font-size:1.3rem; font-weight:600; letter-spacing:-.01em}
+.brand span{color:var(--accent)}
+nav.tabs{display:flex; gap:4px; margin-left:auto; flex-wrap:wrap}
+nav.tabs button{
+  font:inherit; font-size:.88rem; font-weight:500; cursor:pointer;
+  background:transparent; border:1px solid transparent; color:var(--muted);
+  padding:8px 13px; border-radius:8px; transition:.18s;
+}
+nav.tabs button:hover{color:var(--text); background:var(--chip)}
+nav.tabs button[aria-selected="true"]{
+  color:var(--text); background:var(--chip); border-color:var(--line);
+  box-shadow:inset 0 -2px 0 var(--accent);
+}
+#themeBtn{
+  border:1px solid var(--line); background:var(--surface); color:var(--muted);
+  width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:1rem;
+}
+
+/* ---------- Hero ---------- */
+.hero{padding:56px 0 26px; display:grid; grid-template-columns:1fr 190px; gap:38px; align-items:start}
+.hero h1{font-family:Newsreader,Georgia,serif; font-size:clamp(2rem,5vw,2.9rem); line-height:1.12; margin:0 0 8px; letter-spacing:-.02em}
+.role{color:var(--muted); font-size:1.03rem; margin:0 0 18px}
+.avatar{
+  width:190px; height:190px; border-radius:16px; object-fit:cover;
+  border:1px solid var(--line); box-shadow:var(--shadow); background:var(--chip);
+}
+.links{display:flex; gap:9px; flex-wrap:wrap; margin-top:6px}
+.links a{
+  font-size:.85rem; font-weight:500; padding:7px 13px; border-radius:999px;
+  border:1px solid var(--line); background:var(--surface); color:var(--text); box-shadow:var(--shadow);
+}
+.links a:hover{border-color:var(--accent); color:var(--accent); text-decoration:none}
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin:34px 0 8px}
+.stat{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow)}
+.stat b{display:block; font-family:Newsreader,serif; font-size:1.7rem; line-height:1.1; color:var(--accent)}
+.stat span{font-size:.8rem; color:var(--muted)}
+
+/* ---------- Panels ---------- */
+main{padding:12px 0 80px}
+.panel{display:none; animation:fade .3s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+h2.sec{font-family:Newsreader,serif; font-size:1.9rem; margin:34px 0 6px; letter-spacing:-.015em}
+h3.sub{font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; color:var(--accent); margin:32px 0 12px; font-weight:600}
+p.lead{font-size:1.06rem; color:var(--muted); max-width:70ch}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:20px 22px; box-shadow:var(--shadow); margin-bottom:14px}
+.card h4{margin:0 0 4px; font-size:1rem}
+.meta{font-size:.85rem; color:var(--muted)}
+.chips{display:flex; gap:7px; flex-wrap:wrap; margin:14px 0 0}
+.chip{background:var(--chip); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:.8rem; color:var(--muted)}
+ul.clean{list-style:none; padding:0; margin:0}
+ul.clean>li{padding:14px 0; border-bottom:1px solid var(--line)}
+ul.clean>li:last-child{border-bottom:0}
+.tag{
+  display:inline-block; font-size:.7rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+  background:var(--chip); border:1px solid var(--line); border-radius:5px; padding:2px 7px; color:var(--muted); margin-left:6px; vertical-align:2px;
+}
+.pub{display:grid; grid-template-columns:30px 1fr; gap:12px; padding:15px 0; border-bottom:1px solid var(--line)}
+.pub:last-child{border-bottom:0}
+.pub .n{font-family:Newsreader,serif; color:var(--accent); font-weight:600}
+.pub .t{font-weight:500}
+.pub .v{font-size:.88rem; color:var(--muted); font-style:italic}
+table{width:100%; border-collapse:collapse; font-size:.92rem; margin-top:6px}
+th,td{text-align:left; padding:11px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted)}
+td.amt{font-weight:600; white-space:nowrap; color:var(--accent)}
+.timeline{border-left:2px solid var(--line); padding-left:22px; margin-left:6px}
+.timeline .item{position:relative; padding-bottom:26px}
+.timeline .item::before{content:""; position:absolute; left:-29px; top:7px; width:11px; height:11px; border-radius:50%; background:var(--accent-2); border:2px solid var(--surface)}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+footer{border-top:1px solid var(--line); padding:26px 0; font-size:.85rem; color:var(--muted); text-align:center}
+@media(max-width:760px){
+  .hero{grid-template-columns:1fr; gap:22px} .avatar{width:130px; height:130px}
+  nav.tabs{margin-left:0; width:100%; overflow-x:auto} .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <div class="brand">Ashif S. <span>Iquebal</span></div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="about"        aria-selected="true">About</button>
+      <button role="tab" data-tab="research"     aria-selected="false">Research</button>
+      <button role="tab" data-tab="publications" aria-selected="false">Publications</button>
+      <button role="tab" data-tab="funding"      aria-selected="false">Funding</button>
+      <button role="tab" data-tab="teaching"     aria-selected="false">Teaching</button>
+      <button role="tab" data-tab="awards"       aria-selected="false">Awards</button>
+      <button role="tab" data-tab="contact"      aria-selected="false">Contact</button>
+    </nav>
+    <button id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Ashif S. Iquebal</h1>
+      <p class="role">
+        Associate Professor · School of Computing and Augmented Intelligence<br>
+        Graduate Faculty, Industrial Engineering &amp; Computer Science · Arizona State University
+      </p>
+      <div class="links">
+        <a href="mailto:aiquebal@asu.edu">✉ aiquebal@asu.edu</a>
+        <a href="https://scholar.google.com/citations?hl=en&user=z17CKWQAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Google Scholar</a>
+        <a href="https://www.linkedin.com/in/ashif-iquebal-72809317b/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="assets/CV-Iquebal.pdf" target="_blank" rel="noopener">Curriculum Vitae ↗</a>
+      </div>
+    </div>
+    <!-- Replace with your photo: assets/photo.jpg -->
+    <img class="avatar" src="assets/photo.jpg" alt="Portrait of Ashif S. Iquebal"
+         onerror="this.style.display='none'">
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><b>40+</b><span>Peer-reviewed publications</span></div>
+    <div class="stat"><b>$11.6M</b><span>External research funding</span></div>
+    <div class="stat"><b>8</b><span>Best paper finalist / winner</span></div>
+    <div class="stat"><b>7</b><span>PhD students advised</span></div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ============ ABOUT ============ -->
+<section class="panel active" id="about" role="tabpanel">
+  <h2 class="sec">Research Summary</h2>
+  <p class="lead">
+    My research focuses on developing <strong>generalizable AI and machine learning methods for scientific
+    discovery</strong> — including generative modeling (flow matching, diffusion), post-training via
+    reinforcement learning (PPO, DPO), model interpretability, causal inference, and physics-informed
+    models — applied to health care, materials science, and complex physical systems under uncertainty.
+  </p>
+  <p class="lead">
+    Fundamental and applied work on these topics appears in venues such as NAACL, IEEE TPAMI, IEEE
+    Transactions on Signal Processing, and JAIR, and has earned finalist or winner recognition in eight
+    best-paper competitions across IEEE, INFORMS, and IISE. This research has been supported by over
+    <strong>$11M</strong> from NSF, NIH, DOD, and industry partners.
+  </p>
+  <div class="chips">
+    <span class="chip">Python · PyTorch · JAX</span>
+    <span class="chip">C++ / CUDA</span>
+    <span class="chip">GPU-accelerated training</span>
+    <span class="chip">Bayesian methods</span>
+  </div>
+
+  <h3 class="sub">Education</h3>
+  <div class="timeline">
+    <div class="item">
+      <h4 style="margin:0">Ph.D., Industrial &amp; Systems Engineering <span class="tag">2020</span></h4>
+      <div class="meta">Texas A&amp;M University</div>
+    </div>
+    <div class="item">
+      <h4 style="margin:0">M.S., Statistics <span class="tag">2019</span></h4>
+      <div class="meta">Texas A&amp;M University</div>
+    </div>
+    <div class="item">
+      <h4 style="margin:0">B.Tech., Industrial &amp; Systems Engineering <span class="tag">2014</span></h4>
+      <div class="meta">Indian Institute of Technology, Kharagpur · Minor in Mathematics &amp; Computing</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Professional Experience</h3>
+  <div class="timeline">
+    <div class="item">
+      <h4 style="margin:0">Associate Professor <span class="tag">Fall 2026 –</span></h4>
+      <div class="meta">School of Computing and Augmented Intelligence, Arizona State University<br>
+      Graduate Faculty of Industrial Engineering and Computer Science</div>
+    </div>
+    <div class="item">
+      <h4 style="margin:0">Assistant Professor <span class="tag">2020 – 2026</span></h4>
+      <div class="meta">School of Computing and Augmented Intelligence, Arizona State University</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RESEARCH ============ -->
+<section class="panel" id="research" role="tabpanel">
+  <h2 class="sec">Research</h2>
+  <p class="lead">My group builds AI methods that are rigorous enough to be trusted in scientific and
+  engineering decision-making, and general enough to transfer across domains.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Generative AI for the Sciences</h4>
+      <p class="meta">Flow matching, diffusion models, and adjoint matching for molecular and materials
+      discovery; fine-tuning molecular foundation models in data-scarce regimes; emulating microstructural
+      evolution with tensor-decomposed neural architectures.</p>
+    </div>
+    <div class="card">
+      <h4>Causal Inference &amp; Interpretability</h4>
+      <p class="meta">Counterfactual explanation methods (SCGAN) for clinical prediction; root-cause
+      analysis via the velocity fields of optimal transport; interpretable models for treatment-response
+      and diagnostic settings.</p>
+    </div>
+    <div class="card">
+      <h4>Physics-Informed &amp; Uncertainty-Aware Learning</h4>
+      <p class="meta">Discovering governing physics under uncertainty; stochastic inverse modeling for
+      elastoplastic property characterization; change detection in complex dynamical systems.</p>
+    </div>
+    <div class="card">
+      <h4>Sequential Decision Making &amp; Active Learning</h4>
+      <p class="meta">Dynamic exploration–exploitation trade-offs with Bayesian hierarchical models;
+      accelerating point-based value iteration for POMDPs; information-theoretic, surprise-driven
+      approaches to decision support.</p>
+    </div>
+    <div class="card">
+      <h4>AI for Manufacturing &amp; Digital Twins</h4>
+      <p class="meta">Computational additive manufacturing, self-organizing networks for thermal
+      simulation, autonomous laser processing, and vector quantization of sensor streams under bandwidth
+      and edge-hardware constraints.</p>
+    </div>
+    <div class="card">
+      <h4>Applications in Health Care</h4>
+      <p class="meta">Prediction of genetic mutations from -omics and imaging data (with Mayo Clinic),
+      breast cancer risk and treatment-response modeling, and decision-support systems for clinicians.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PUBLICATIONS ============ -->
+<section class="panel" id="publications" role="tabpanel">
+  <h2 class="sec">Selected Publications</h2>
+  <p class="lead">A complete list is available on
+    <a href="https://scholar.google.com/citations?hl=en&user=z17CKWQAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Google Scholar</a>.</p>
+
+  <h3 class="sub">AI/ML for Scientific Discovery &amp; Causal Inference</h3>
+  <div>
+    <div class="pub"><div class="n">1</div><div>
+      <div class="t"><a href="https://github.com/asiquebal22/RCA-FlowMatching/tree/main/Manuscript" target="_blank" rel="noopener">Velocity Fields of Optimal Transport Reveal Causality: Towards Root Cause Analysis via Flow Matching</a></div>
+      <div class="meta">A. Iquebal</div><div class="v">Working Paper, ICLR 2027</div></div></div>
+
+    <div class="pub"><div class="n">2</div><div>
+      <div class="t"><a href="https://www.nature.com/articles/s42005-026-02711-7" target="_blank" rel="noopener">Discovering Governing Physics in the Presence of Uncertainty</a></div>
+      <div class="meta">R. Olabiyi, H. Hu, A. Iquebal</div><div class="v">Communications Physics, 2026</div></div></div>
+
+    <div class="pub"><div class="n">3</div><div>
+      <div class="t"><a href="https://doi.org/10.1080/24725854.2024.2332910" target="_blank" rel="noopener">Dynamic Exploration–Exploitation Trade-off in Active Learning with Bayesian Hierarchical Modeling</a></div>
+      <div class="meta">U. J. Islam, K. Paynabar, G. Runger, A. S. Iquebal</div><div class="v">IISE Transactions, 57(4):393–407, 2025</div></div></div>
+
+    <div class="pub"><div class="n">4</div><div>
+      <div class="t"><a href="https://doi.org/10.1109/TASE.2023.3333788" target="_blank" rel="noopener">SCGAN: Sparse CounterGAN for Counterfactual Explanations in Breast Cancer Prediction</a></div>
+      <div class="meta">S. Zhou, U. Islam, N. Pfeiffer, I. Banerjee, B. K. Patel, A. S. Iquebal</div><div class="v">IEEE Transactions on Automation Science and Engineering, 2023</div></div></div>
+
+    <div class="pub"><div class="n">5</div><div>
+      <div class="t"><a href="https://doi.org/10.1109/CASE49997.2022.9926519" target="_blank" rel="noopener">Generating Counterfactual Explanations for Causal Inference in Breast Cancer Treatment Response</a></div>
+      <div class="meta">S. Zhou, N. Pfeiffer, U. Islam, I. Banerjee, B. K. Patel, A. S. Iquebal</div><div class="v">IEEE CASE, pp. 955–960, 2022</div></div></div>
+
+    <div class="pub"><div class="n">6</div><div>
+      <div class="t"><a href="https://doi.org/10.1016/j.triboint.2019.106074" target="_blank" rel="noopener">Learning Acoustic Emission Signatures from a Nanoindentation-Based Lithography Process</a></div>
+      <div class="meta">A. S. Iquebal, S. Pandagare, S. T. S. Bukkapatnam</div><div class="v">Tribology International, 143:106074, 2019</div></div></div>
+  </div>
+
+  <h3 class="sub">Generative AI for Sciences</h3>
+  <div>
+    <div class="pub"><div class="n">7</div><div>
+      <div class="t">Fine-tuning Molecular Foundation Models via Adjoint Matching for Data-Scarce Discovery</div>
+      <div class="meta">K. Coutinho, L. Dai, A. Iquebal</div><div class="v">Working Paper, ICML 2027</div></div></div>
+
+    <div class="pub"><div class="n">8</div><div>
+      <div class="t"><a href="https://aclanthology.org/2025.findings-naacl.420/" target="_blank" rel="noopener">Hypothesis Generation for Materials Discovery and Design using Goal-Driven and Constraint-Guided LLM Agents</a></div>
+      <div class="meta">S. Kumbhar, V. Mishra, K. Coutinho, D. Handa, A. Iquebal, C. Baral</div><div class="v">Findings of ACL: NAACL 2025, pp. 7524–7555</div></div></div>
+
+    <div class="pub"><div class="n">9</div><div>
+      <div class="t"><a href="https://doi.org/10.1016/j.commatsci.2023.112187" target="_blank" rel="noopener">Emulating Microstructural Evolution During Spinodal Decomposition using a Tensor Decomposed Convolutional and Recurrent Neural Network</a></div>
+      <div class="meta">P. Wu, A. S. Iquebal, K. Ankit</div><div class="v">Computational Materials Science, 224:112187, 2023</div></div></div>
+
+    <div class="pub"><div class="n">10</div><div>
+      <div class="t"><a href="https://doi.org/10.1557/s43577-022-00443-x" target="_blank" rel="noopener">Emulating the Evolution of Phase Separating Microstructures using Low-Dimensional Tensor Decomposition and Nonlinear Regression</a></div>
+      <div class="meta">A. S. Iquebal, P. Wu, S. Ali, K. Ankit</div><div class="v">MRS Bulletin, 2023</div></div></div>
+
+    <div class="pub"><div class="n">11</div><div>
+      <div class="t"><a href="https://link.springer.com/article/10.1007/s11664-023-10237-9" target="_blank" rel="noopener">A Novel Data-Driven Emulator for Predicting Electromigration-Mediated Damage in Polycrystalline Interconnects</a></div>
+      <div class="meta">P. Wu, W. Farmer, A. S. Iquebal, K. Ankit</div><div class="v">Journal of Electronic Materials, 2023</div></div></div>
+  </div>
+
+  <h3 class="sub">Other AI/ML Foundations &amp; Applications</h3>
+  <div>
+    <div class="pub"><div class="n">12</div><div>
+      <div class="t"><a href="https://arxiv.org/abs/2503.08982" target="_blank" rel="noopener">Accelerating Point-Based Value Iteration via Active Sampling of Belief Points and Gaussian Process Regression</a></div>
+      <div class="meta">S. Zhou, E. Gel, A. Iquebal</div><div class="v">Journal of Artificial Intelligence Research, 2026 (accepted)</div></div></div>
+
+    <div class="pub"><div class="n">13</div><div>
+      <div class="t">Optimizing Self-Organizing Network for Thermal Simulation in Additive Manufacturing</div>
+      <div class="meta">R. Liu, H. Yang, A. Iquebal</div><div class="v">Journal of Manufacturing and Systems Engineering, 2026 (accepted)</div></div></div>
+
+    <div class="pub"><div class="n">14</div><div>
+      <div class="t"><a href="https://drive.google.com/file/d/1FFtr5CnxWayWtxhSX8_o_r97NbT2SSqQ/view?usp=sharing" target="_blank" rel="noopener">From Orthographic Freehand Sketches to 3D CAD: A Geometry-Aware Multi-View CAD Primitive Generation Framework</a></div>
+      <div class="meta">M. Kothandaraman, A. Iquebal</div><div class="v">Working Paper, ICLR 2027</div></div></div>
+
+    <div class="pub"><div class="n">15</div><div>
+      <div class="t">Vector Quantization of Complex Sensor Data in Limited Network Bandwidth and Edge Hardware Constrained Digital Twins</div>
+      <div class="meta">A. Varghese, B. Starly, A. Iquebal</div><div class="v">Manufacturing Letters, 2026 (accepted)</div></div></div>
+
+    <div class="pub"><div class="n">16</div><div>
+      <div class="t"><a href="https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=957004" target="_blank" rel="noopener">Characterization of Elastoplastic Properties of Additively Manufactured Specimens from Indentation Data using Stochastic Inverse Modeling</a></div>
+      <div class="meta">R. Olabiyi, J. Weaver, A. S. Iquebal</div><div class="v">ASME MSEC, 2024</div></div></div>
+
+    <div class="pub"><div class="n">17</div><div>
+      <div class="t"><a href="https://doi.org/10.1109/TPAMI.2020.3039745" target="_blank" rel="noopener">Consistent Estimation of the Max-Flow Problem: Towards Unsupervised Image Segmentation</a></div>
+      <div class="meta">A. S. Iquebal, S. T. S. Bukkapatnam</div><div class="v">IEEE TPAMI, 44(5):2346–2357, 2022</div></div></div>
+
+    <div class="pub"><div class="n">18</div><div>
+      <div class="t"><a href="https://doi.org/10.1007/s00170-021-07661-8" target="_blank" rel="noopener">An Autonomous Laser Kirigami Method With Low-Cost Real-Time Vision-Based Surface Deformation Feedback System</a></div>
+      <div class="meta">Z. Wang, Z. Wang, W.-H. Ko, A. S. Iquebal, V. Nguyen, N. A. Kazerooni, Q. Ma, A. Srinivasa, P. R. Kumar, S. Bukkapatnam</div><div class="v">Int. Journal of Advanced Manufacturing Technology, 118(5):1873–1883, 2022</div></div></div>
+
+    <div class="pub"><div class="n">19</div><div>
+      <div class="t"><a href="https://doi.org/10.1109/TSP.2020.3014423" target="_blank" rel="noopener">Change Detection in Complex Dynamical Systems using Intrinsic Phase and Amplitude Synchronization</a></div>
+      <div class="meta">A. S. Iquebal, S. T. S. Bukkapatnam, A. Srinivasa</div><div class="v">IEEE Transactions on Signal Processing, 68:4743–4756, 2020</div></div></div>
+  </div>
+</section>
+
+<!-- ============ FUNDING ============ -->
+<section class="panel" id="funding" role="tabpanel">
+  <h2 class="sec">Selected External Funding</h2>
+  <p class="lead">Totaling <strong>&#36;11.6M</strong> across generative modeling for molecular discovery and
+  materials design, AI-driven decision making, and ML/AI for autonomous systems.</p>
+  <table>
+    <thead><tr><th>Sponsor</th><th>Project</th><th>Amount</th><th>Period</th></tr></thead>
+    <tbody>
+      <tr><td>NSF</td><td>Accelerating Computational Additive Manufacturing</td><td class="amt">&#36;500K</td><td>2025–28</td></tr>
+      <tr><td>DOD – Army</td><td>Accelerate Materials Design and Process Optimization through AI/ML</td><td class="amt">&#36;10M</td><td>2024–28</td></tr>
+      <tr><td>DOD – MxD</td><td>Executing What-If Scenarios at Hyperscale via Virtual Manufacturing</td><td class="amt">&#36;150K</td><td>2023–25</td></tr>
+      <tr><td>NIH</td><td>Information-Theoretic, Surprise-Driven Approach to Enhance Decision Making</td><td class="amt">&#36;700K</td><td>2023–27</td></tr>
+      <tr><td>SRP</td><td>Tracking of Spare Parts for Supply Chain Circularity &amp; Waste Characterization</td><td class="amt">&#36;145K</td><td>2023–24</td></tr>
+      <tr><td>MK Morse</td><td>Active Learning for Process Optimization in Saw Blade Manufacturing</td><td class="amt">&#36;15K</td><td>2024</td></tr>
+      <tr><td>Mayo Clinic</td><td>Diagnosis and Prediction of Genetic Mutations via -omics and Imaging</td><td class="amt">&#36;100K</td><td>2023–25</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ TEACHING ============ -->
+<section class="panel" id="teaching" role="tabpanel">
+  <h2 class="sec">Teaching, Mentoring &amp; Service</h2>
+
+  <h3 class="sub">Teaching</h3>
+  <div class="card">
+    <h4>Developed and taught</h4>
+    <p class="meta">Advanced Quality Control · Mathematical Statistics<br>
+    Average instructor evaluation: <strong>4.6 / 5</strong> · ASU Top 5% Teaching Award (2022)</p>
+  </div>
+
+  <h3 class="sub">Mentoring</h3>
+  <div class="stats" style="margin-top:0">
+    <div class="stat"><b>7</b><span>PhD students advised</span></div>
+    <div class="stat"><b>15</b><span>PhD committees served</span></div>
+    <div class="stat"><b>9</b><span>MS students</span></div>
+    <div class="stat"><b>50+</b><span>Undergraduate researchers</span></div>
+  </div>
+
+  <h3 class="sub">Professional Service</h3>
+  <ul class="clean">
+    <li><strong>Council / Board member</strong> — INFORMS Quality, Statistics &amp; Reliability (2023–present); NAMRC Scientific Committee (2024–present); IISE Manufacturing &amp; Design (2024–present); IISE Data Analytics (2022–24)</li>
+    <li><strong>Track Chair</strong> — ASME MSEC 2023</li>
+    <li><strong>Reviewer</strong> — 15+ journals and conferences, including IISE Transactions, IEEE TASE, IEEE TNNLS, Additive Manufacturing, and Journal of Quality Technology</li>
+  </ul>
+</section>
+
+<!-- ============ AWARDS ============ -->
+<section class="panel" id="awards" role="tabpanel">
+  <h2 class="sec">Honors &amp; Awards</h2>
+
+  <h3 class="sub">Major Honors</h3>
+  <ul class="clean">
+    <li><strong>Trailblazer Award for New and Early Stage Investigators</strong> — NIBIB / NIH <span class="tag">2023</span></li>
+    <li><strong>NSF Manufacturing Blue Sky Competition Finalist</strong> <span class="tag">2022</span></li>
+    <li><strong>ASU Top 5% Teaching Award</strong> <span class="tag">2022</span></li>
+    <li><strong>Third Place, IISE Pritsker Doctoral Dissertation Award</strong> <span class="tag">2021</span></li>
+  </ul>
+
+  <h3 class="sub">Best Paper Competitions — Finalist / Winner</h3>
+  <ul class="clean">
+    <li><strong>IISE Manufacturing &amp; Design (2026)</strong><br><span class="meta">Optimizing Self-Organizing Network for Thermal Simulation in Additive Manufacturing</span></li>
+    <li><strong>INFORMS Quality, Statistics, and Reliability (2024)</strong><br><span class="meta">Discovering Governing Physics in the Presence of Uncertainty</span></li>
+    <li><strong>IEEE CASE Healthcare Automation (2022)</strong><br><span class="meta">SCGAN: Sparse CounterGAN for Counterfactual Explanations in Breast Cancer Prediction</span></li>
+    <li><strong>IISE QC&amp;RE — Best Paper (2019) · INFORMS QSR — Best Poster (2018) · INFORMS Data Mining (2018)</strong><br><span class="meta">Consistent Estimation of the Max-Flow Problem: Towards Unsupervised Image Segmentation</span></li>
+    <li><strong>INFORMS Data Mining (2016)</strong><br><span class="meta">Change Detection in Complex Dynamical Systems using Intrinsic Phase and Amplitude Synchronization</span></li>
+  </ul>
+
+  <h3 class="sub">Other Recognition</h3>
+  <ul class="clean">
+    <li>NSF Travel Grants (2018, 2016) · Fellow, Academy of Future Faculty, Texas A&amp;M (2018) · Graduate Teaching Fellowship (2017) · Runner-up, ASA Southeastern Texas Best Student Poster (2017) · INFORMS Doctoral Colloquium Travel Grant (2017)</li>
+  </ul>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="panel" id="contact" role="tabpanel">
+  <h2 class="sec">Contact</h2>
+  <p class="lead">I am always happy to hear from prospective students, collaborators, and industry partners
+  interested in AI/ML for scientific discovery.</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>Email</h4>
+      <p class="meta"><a href="mailto:aiquebal@asu.edu">aiquebal@asu.edu</a></p>
+      <h4 style="margin-top:16px">Phone</h4>
+      <p class="meta">(979) 739-2685</p>
+    </div>
+    <div class="card">
+      <h4>Affiliation</h4>
+      <p class="meta">School of Computing and Augmented Intelligence<br>
+      Arizona State University<br>Tempe, AZ, USA</p>
+      <h4 style="margin-top:16px">Profiles</h4>
+      <p class="meta">
+        <a href="https://scholar.google.com/citations?hl=en&user=z17CKWQAAAAJ&view_op=list_works&sortby=pubdate" target="_blank" rel="noopener">Google Scholar</a> ·
+        <a href="https://www.linkedin.com/in/ashif-iquebal-72809317b/" target="_blank" rel="noopener">LinkedIn</a> ·
+        <a href="assets/CV-Iquebal.pdf" target="_blank" rel="noopener">CV (PDF)</a>
+      </p>
+    </div>
+  </div>
+  <div class="card">
+    <h4>Prospective students</h4>
+    <p class="meta">If you are applying to ASU and interested in generative modeling, causal inference, or
+    physics-informed ML, please email me with your CV, transcripts, and a short note on which of my papers
+    interests you and why.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">© <span id="yr"></span> Ashif S. Iquebal · School of Computing and Augmented Intelligence, Arizona State University</div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('nav.tabs button');
+const panels = document.querySelectorAll('.panel');
+
+function show(id, push = true){
+  if(!document.getElementById(id)) id = 'about';
+  panels.forEach(p => p.classList.toggle('active', p.id === id));
+  tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.tab === id));
+  if(push) history.replaceState(null, '', '#' + id);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.tab)));
+window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+show(location.hash.slice(1) || 'about', false);
+
+// Theme
+const root = document.documentElement;
+const saved = localStorage.getItem('theme');
+if(saved) root.setAttribute('data-theme', saved);
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+});
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
