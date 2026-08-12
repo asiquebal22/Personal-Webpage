@@ -314,33 +314,63 @@ ul.acc-list li:last-child{margin-bottom:0}
       <h3>
         <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-1" id="acc-btn-1">
           <span class="acc-title">AI &amp; Generative Modeling for Scientific Discovery</span>
-          <span class="acc-blurb">Flow matching, diffusion, and foundation-model post-training for molecular and materials discovery.</span>
+            <span class="acc-blurb">Causal inference via optimal transport, recovering governing equations under uncertainty, and generative design of molecules.</span>
           <span class="acc-icon" aria-hidden="true"></span>
         </button>
       </h3>
       <div class="acc-panel" id="acc-panel-1" role="region" aria-labelledby="acc-btn-1" hidden>
         <div class="acc-body">
-          <p>[Placeholder — overview paragraph for this theme.]</p>
+  <p>Scientific discovery is limited less by data volume than by the cost of each
+    experiment and the difficulty of extracting mechanism from noise. My group builds generative
+    and inverse models that recover interpretable structure — causal, physical, and chemical —
+    from limited and uncertain observations.</p>
 
-          <h4 class="acc-h">Current directions</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — direction one.]</li>
-            <li>[Placeholder — direction two.]</li>
-            <li>[Placeholder — direction three.]</li>
-          </ul>
+  <h4 class="acc-h">Flow matching for causal inference</h4>
+  <p>When a system shifts from a normal to a faulty state, transporting samples between the two
+    distributions defines a <strong>velocity field</strong>, which we learn via flow matching. The
+    root cause is independent of the causal mechanism, so its velocity moves freely; downstream
+    variables are mediated by the mechanism, so their velocities are stretched and compressed by
+    its Jacobian. Causation leaves a signature in how a variable <em>moves</em>, not just where it
+    ends up.</p>
+  <p><em>Major finding:</em> the velocity field factorizes in the causal direction and provably
+    cannot factorize in reverse for any nonlinear mechanism — giving a new identifiability result
+    that needs no causal graph, no bidirectional model fitting, and no assumptions on the noise
+    distribution. On a cloud microservice benchmark it outperforms graph-based baselines while
+    being the only method that requires no knowledge of the service dependency graph.</p>
 
-          <h4 class="acc-h">Representative work</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — paper title, venue, year.]</li>
-            <li>[Placeholder — paper title, venue, year.]</li>
-          </ul>
+  <h4 class="acc-h">Discovering governing physics under uncertainty</h4>
+  <p>Equation-discovery methods treat a system's unknown coefficients as fixed quantities corrupted
+    only by sensor noise. Real systems violate this: viscosity, feedstock composition, and process
+    parameters vary intrinsically from run to run. Our <strong>stochastic inverse physics
+    discovery</strong> framework treats the coefficients themselves as random variables, matching
+    the push-forward of posterior samples to the observed data distribution.</p>
+  <p><em>Major finding:</em> separating genuine system variability from measurement noise is what
+    makes structural recovery reliable. Across ecological, chaotic, and experimental fluid systems,
+    the method recovers the correct set of physics terms without spurious inclusions where
+    competing approaches either invent higher-order terms or drop essential ones — and its credible
+    intervals stay calibrated instead of collapsing. Published in <em>Communications
+    Physics</em>.</p>
 
-          <div class="chips">
-            <span class="chip">Flow matching</span>
-            <span class="chip">Diffusion models</span>
-            <span class="chip">Adjoint matching</span>
-          </div>
-        </div>
+  <h4 class="acc-h">Generative models for molecular and materials discovery</h4>
+  <p>Chemical space is far too large to search by intuition. We use goal-directed generative
+    models — graph-based reinforcement learning and, more recently, adjoint matching on pretrained
+    molecular foundation models — to propose candidate molecules optimized for target properties,
+    such as functional groups that impart self-healing behavior to a host polymer without
+    sacrificing mechanical strength.</p>
+  <p><em>Major finding:</em> property-driven rewards steer generation into regions of chemical
+    space the base model never reaches — but naively maximizing a property invites the model to
+    exploit loopholes, producing molecules with implausible ring strain. Constraining generation
+    toward synthesizable, physically realizable structures is as important as the objective itself,
+    and is where the interesting methodological work lies.</p>
+
+  <div class="chips">
+    <span class="chip">Flow matching</span>
+    <span class="chip">Push-forward inference</span>
+    <span class="chip">Adjoint matching</span>
+    <span class="chip">Reinforcement learning</span>
+    <span class="chip">Sparse equation discovery</span>
+  </div>
+</div>
       </div>
     </article>
 
