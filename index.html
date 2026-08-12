@@ -123,6 +123,71 @@ a.card-link:hover .arrow{transform:translateX(4px)}
   display:inline-block; margin-top:10px; font-size:.8rem; font-weight:600;
   letter-spacing:.04em; text-transform:uppercase; color:var(--accent);
 }
+
+/* ---------- Research accordion ---------- */
+.accordion{margin-top:26px; display:flex; flex-direction:column; gap:12px}
+
+.acc-item{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  box-shadow:var(--shadow); overflow:hidden; transition:border-color .18s;
+}
+.acc-item:hover{border-color:#d8d3cc}
+html[data-theme="dark"] .acc-item:hover{border-color:#3a3e46}
+.acc-item.open{border-color:var(--accent)}
+
+.acc-item h3{margin:0; font-size:inherit; font-weight:inherit}
+
+.acc-trigger{
+  width:100%; display:grid; grid-template-columns:1fr 28px; gap:4px 16px;
+  align-items:start; text-align:left; cursor:pointer;
+  font:inherit; color:inherit; background:transparent; border:0;
+  padding:20px 22px; transition:background .18s;
+}
+.acc-trigger:hover{background:var(--chip)}
+.acc-trigger:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+
+.acc-title{
+  font-family:Newsreader,Georgia,serif; font-size:1.22rem; font-weight:600;
+  letter-spacing:-.01em; line-height:1.3; grid-column:1;
+}
+.acc-item.open .acc-title{color:var(--accent)}
+.acc-blurb{grid-column:1; font-size:.9rem; color:var(--muted); line-height:1.5; margin-top:2px}
+
+.acc-icon{
+  grid-column:2; grid-row:1 / span 2; align-self:center; justify-self:end;
+  position:relative; width:22px; height:22px; border-radius:50%;
+  border:1px solid var(--line); background:var(--chip); transition:.22s;
+}
+.acc-icon::before,.acc-icon::after{
+  content:""; position:absolute; top:50%; left:50%; background:var(--muted);
+  transform:translate(-50%,-50%); transition:.22s;
+}
+.acc-icon::before{width:10px; height:1.5px}
+.acc-icon::after{width:1.5px; height:10px}
+.acc-item.open .acc-icon{background:var(--accent); border-color:var(--accent); transform:rotate(90deg)}
+.acc-item.open .acc-icon::before,.acc-item.open .acc-icon::after{background:#fff}
+.acc-item.open .acc-icon::after{opacity:0}
+
+.acc-panel{overflow:hidden}
+.acc-panel[hidden]{display:none}
+.acc-body{
+  padding:2px 22px 24px; border-top:1px solid var(--line);
+  margin:0 22px 0; padding-left:0; padding-right:0;
+}
+.acc-body>p{color:var(--muted); max-width:70ch; margin:16px 0 0; font-size:.97rem}
+.acc-h{
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.09em;
+  color:var(--accent); margin:22px 0 8px; font-weight:600;
+}
+ul.acc-list{margin:0; padding-left:20px; color:var(--muted); font-size:.94rem}
+ul.acc-list li{margin-bottom:7px; max-width:70ch}
+ul.acc-list li:last-child{margin-bottom:0}
+
+@media(prefers-reduced-motion:reduce){
+  .acc-panel,.acc-icon,.acc-icon::before,.acc-icon::after{transition:none !important}
+}
+
+  
 @media(max-width:760px){
   .hero{grid-template-columns:1fr; gap:22px} .avatar{width:130px; height:130px}
   nav.tabs{margin-left:0; width:100%; overflow-x:auto} .grid2{grid-template-columns:1fr}
@@ -231,50 +296,154 @@ a.card-link:hover .arrow{transform:translateX(4px)}
   </div>
 </section>
 
-<!-- ============ RESEARCH ============ -->
+  <!-- ============ RESEARCH ============ -->
 <section class="panel" id="research" role="tabpanel">
   <h2 class="sec">Research</h2>
   <p class="lead">My group builds AI methods that are rigorous enough to be trusted in scientific and
-  engineering decision-making, and general enough to transfer across domains.</p>
+    engineering decision-making, and general enough to transfer across domains.
+    <span class="meta">Select a theme to expand.</span></p>
 
-  <div class="grid2">
-    <a class="card card-link" href="pages/temp.html">
-      <h4>Generative AI for the Sciences <span class="arrow">→</span></h4>
-      <p class="meta">Flow matching, diffusion models, and adjoint matching for molecular and materials
-      discovery; fine-tuning molecular foundation models in data-scarce regimes; emulating microstructural
-      evolution with tensor-decomposed neural architectures.</p>
-      <span class="readmore">Read more</span>
-    </a>
-    <div class="card">
-      <h4>Causal Inference &amp; Interpretability</h4>
-      <p class="meta">Counterfactual explanation methods (SCGAN) for clinical prediction; root-cause
-      analysis via the velocity fields of optimal transport; interpretable models for treatment-response
-      and diagnostic settings.</p>
-    </div>
-    <div class="card">
-      <h4>Physics-Informed &amp; Uncertainty-Aware Learning</h4>
-      <p class="meta">Discovering governing physics under uncertainty; stochastic inverse modeling for
-      elastoplastic property characterization; change detection in complex dynamical systems.</p>
-    </div>
-    <div class="card">
-      <h4>Sequential Decision Making &amp; Active Learning</h4>
-      <p class="meta">Dynamic exploration–exploitation trade-offs with Bayesian hierarchical models;
-      accelerating point-based value iteration for POMDPs; information-theoretic, surprise-driven
-      approaches to decision support.</p>
-    </div>
-    <div class="card">
-      <h4>AI for Manufacturing &amp; Digital Twins</h4>
-      <p class="meta">Computational additive manufacturing, self-organizing networks for thermal
-      simulation, autonomous laser processing, and vector quantization of sensor streams under bandwidth
-      and edge-hardware constraints.</p>
-    </div>
-    <div class="card">
-      <h4>Applications in Health Care</h4>
-      <p class="meta">Prediction of genetic mutations from -omics and imaging data (with Mayo Clinic),
-      breast cancer risk and treatment-response modeling, and decision-support systems for clinicians.</p>
-    </div>
+  <div class="accordion" id="researchAccordion">
+
+    <!-- ---- 1. Scientific Discovery ---- -->
+    <article class="acc-item">
+      <h3>
+        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-1" id="acc-btn-1">
+          <span class="acc-title">AI &amp; Generative Modeling for Scientific Discovery</span>
+          <span class="acc-blurb">Flow matching, diffusion, and foundation-model post-training for molecular and materials discovery.</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div class="acc-panel" id="acc-panel-1" role="region" aria-labelledby="acc-btn-1" hidden>
+        <div class="acc-body">
+          <p>[Placeholder — overview paragraph for this theme.]</p>
+
+          <h4 class="acc-h">Current directions</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — direction one.]</li>
+            <li>[Placeholder — direction two.]</li>
+            <li>[Placeholder — direction three.]</li>
+          </ul>
+
+          <h4 class="acc-h">Representative work</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — paper title, venue, year.]</li>
+            <li>[Placeholder — paper title, venue, year.]</li>
+          </ul>
+
+          <div class="chips">
+            <span class="chip">Flow matching</span>
+            <span class="chip">Diffusion models</span>
+            <span class="chip">Adjoint matching</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---- 2. Causal Inference & Interpretability ---- -->
+    <article class="acc-item">
+      <h3>
+        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-2" id="acc-btn-2">
+          <span class="acc-title">Causal Inference &amp; Interpretability</span>
+          <span class="acc-blurb">Counterfactual explanation, root-cause analysis, and models built to be scrutinized.</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div class="acc-panel" id="acc-panel-2" role="region" aria-labelledby="acc-btn-2" hidden>
+        <div class="acc-body">
+          <p>[Placeholder — overview paragraph for this theme.]</p>
+
+          <h4 class="acc-h">Current directions</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — direction one.]</li>
+            <li>[Placeholder — direction two.]</li>
+          </ul>
+
+          <h4 class="acc-h">Representative work</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — paper title, venue, year.]</li>
+          </ul>
+
+          <div class="chips">
+            <span class="chip">Counterfactuals</span>
+            <span class="chip">Optimal transport</span>
+            <span class="chip">Explainability</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---- 3. Active Learning & Sequential Experimentation ---- -->
+    <article class="acc-item">
+      <h3>
+        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-3" id="acc-btn-3">
+          <span class="acc-title">Active Learning &amp; Sequential Experimentation</span>
+          <span class="acc-blurb">Deciding what to measure next when experiments are expensive and budgets are finite.</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div class="acc-panel" id="acc-panel-3" role="region" aria-labelledby="acc-btn-3" hidden>
+        <div class="acc-body">
+          <p>[Placeholder — overview paragraph for this theme.]</p>
+
+          <h4 class="acc-h">Current directions</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — direction one.]</li>
+            <li>[Placeholder — direction two.]</li>
+          </ul>
+
+          <h4 class="acc-h">Representative work</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — paper title, venue, year.]</li>
+          </ul>
+
+          <div class="chips">
+            <span class="chip">Bayesian optimization</span>
+            <span class="chip">Exploration–exploitation</span>
+            <span class="chip">POMDPs</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ---- 4. Other AI/ML Applications ---- -->
+    <article class="acc-item">
+      <h3>
+        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-4" id="acc-btn-4">
+          <span class="acc-title">Other AI/ML Applications</span>
+          <span class="acc-blurb">Manufacturing and digital twins, health care, and physics-informed modeling.</span>
+          <span class="acc-icon" aria-hidden="true"></span>
+        </button>
+      </h3>
+      <div class="acc-panel" id="acc-panel-4" role="region" aria-labelledby="acc-btn-4" hidden>
+        <div class="acc-body">
+          <p>[Placeholder — overview paragraph for this theme.]</p>
+
+          <h4 class="acc-h">Current directions</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — direction one.]</li>
+            <li>[Placeholder — direction two.]</li>
+          </ul>
+
+          <h4 class="acc-h">Representative work</h4>
+          <ul class="acc-list">
+            <li>[Placeholder — paper title, venue, year.]</li>
+          </ul>
+
+          <div class="chips">
+            <span class="chip">Digital twins</span>
+            <span class="chip">Additive manufacturing</span>
+            <span class="chip">Physics-informed ML</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
   </div>
 </section>
+
+
+  
 
 <!-- ============ PUBLICATIONS ============ -->
 <section class="panel" id="publications" role="tabpanel">
@@ -598,6 +767,82 @@ tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.tab)));
 window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
 show(location.hash.slice(1) || 'about', false);
 
+/* ---------- Research accordion ---------- */
+(function(){
+  const acc = document.getElementById('researchAccordion');
+  if(!acc) return;
+
+  const REDUCED = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const ALLOW_MULTIPLE = true;   // set false for one-at-a-time behavior
+
+  function collapse(btn){
+    const item  = btn.closest('.acc-item');
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded','false');
+    item.classList.remove('open');
+    if(REDUCED){ panel.hidden = true; panel.style.height=''; return; }
+    panel.style.height = panel.scrollHeight + 'px';
+    requestAnimationFrame(() => {
+      panel.style.transition = 'height .26s ease';
+      panel.style.height = '0px';
+    });
+    panel.addEventListener('transitionend', function done(e){
+      if(e.propertyName !== 'height') return;
+      panel.hidden = true; panel.style.transition=''; panel.style.height='';
+      panel.removeEventListener('transitionend', done);
+    });
+  }
+
+  function expand(btn){
+    const item  = btn.closest('.acc-item');
+    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.setAttribute('aria-expanded','true');
+    item.classList.add('open');
+    panel.hidden = false;
+    if(REDUCED) return;
+    panel.style.height = '0px';
+    requestAnimationFrame(() => {
+      panel.style.transition = 'height .26s ease';
+      panel.style.height = panel.scrollHeight + 'px';
+    });
+    panel.addEventListener('transitionend', function done(e){
+      if(e.propertyName !== 'height') return;
+      panel.style.transition=''; panel.style.height='auto';
+      panel.removeEventListener('transitionend', done);
+    });
+  }
+
+  const triggers = [...acc.querySelectorAll('.acc-trigger')];
+
+  triggers.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      if(isOpen){ collapse(btn); return; }
+      if(!ALLOW_MULTIPLE){
+        triggers.forEach(o => { if(o.getAttribute('aria-expanded')==='true') collapse(o); });
+      }
+      expand(btn);
+    });
+
+    // Arrow-key navigation between headers
+    btn.addEventListener('keydown', e => {
+      const map = {ArrowDown:1, ArrowUp:-1};
+      if(e.key in map){
+        e.preventDefault();
+        triggers[(i + map[e.key] + triggers.length) % triggers.length].focus();
+      } else if(e.key === 'Home'){ e.preventDefault(); triggers[0].focus(); }
+        else if(e.key === 'End'){  e.preventDefault(); triggers.at(-1).focus(); }
+    });
+  });
+
+  // Deep link: #research/causal opens that card
+  const slugs = ['discovery','causal','active','applications'];
+  const hashParts = location.hash.slice(1).split('/');
+  if(hashParts[0] === 'research' && slugs.includes(hashParts[1])){
+    expand(triggers[slugs.indexOf(hashParts[1])]);
+  }
+})();
+  
 // Theme
 const root = document.documentElement;
 const saved = localStorage.getItem('theme');
