@@ -320,57 +320,56 @@ ul.acc-list li:last-child{margin-bottom:0}
       </h3>
       <div class="acc-panel" id="acc-panel-1" role="region" aria-labelledby="acc-btn-1" hidden>
         <div class="acc-body">
-  <p>Scientific discovery is limited less by data volume than by the cost of each
-    experiment and the difficulty of extracting mechanism from noise. My group builds generative
-    and inverse models that recover interpretable structure — causal, physical, and chemical —
-    from limited and uncertain observations.</p>
+            <p>Scientific discovery is constrained less by data volume than by the cost of each observation
+    and the difficulty of extracting mechanism from noise. My group develops generative and inverse
+    models that recover interpretable structure — physical and chemical — from limited, uncertain
+    observations, rather than merely fitting them.</p>
 
-  <h4 class="acc-h">Flow matching for causal inference</h4>
-  <p>When a system shifts from a normal to a faulty state, transporting samples between the two
-    distributions defines a <strong>velocity field</strong>, which we learn via flow matching. The
-    root cause is independent of the causal mechanism, so its velocity moves freely; downstream
-    variables are mediated by the mechanism, so their velocities are stretched and compressed by
-    its Jacobian. Causation leaves a signature in how a variable <em>moves</em>, not just where it
-    ends up.</p>
-  <p><em>Major finding:</em> the velocity field factorizes in the causal direction and provably
-    cannot factorize in reverse for any nonlinear mechanism — giving a new identifiability result
-    that needs no causal graph, no bidirectional model fitting, and no assumptions on the noise
-    distribution. On a cloud microservice benchmark it outperforms graph-based baselines while
-    being the only method that requires no knowledge of the service dependency graph.</p>
+  <h4 class="acc-h">Discovering governing physics in the presence of uncertainty</h4>
+  <p>Existing equation-discovery methods model observed data as corrupted solely by measurement
+    noise, treating the unknown coefficients of a dynamical system as fixed quantities. Real systems
+    violate this premise: viscosity and density vary across fluids, feedstock and process parameters
+    vary across manufacturing runs, and the observed dynamics reflect not just sensor corruption but
+    genuine physical uncertainty. We introduce a <strong>stochastic inverse physics-discovery</strong>
+    framework that re-envisions the unknown coefficients as random variables, inferring their
+    posterior distributions by matching the push-forward of posterior samples to the empirical data
+    distribution.</p>
+  <p><em>Major finding:</em> accounting for system variability alongside measurement noise is the
+    key to consistently recovering the correct governing equations. Across ecological dynamics,
+    chaotic attractors, oscillatory systems, and experimental capillary infiltration, the method
+    recovers the true set of active physics terms without spurious inclusions — where competing
+    approaches either introduce higher-order terms that misrepresent the physics or omit essential
+    ones entirely. Because the framework attributes uncertainty to both sources rather than
+    absorbing variability into the noise estimate, its credible intervals remain calibrated instead
+    of artificially narrowing.</p>
+  <p class="acc-more"><a href="https://www.nature.com/articles/s42005-026-02711-7"
+    target="_blank" rel="noopener">Read more in <em>Communications Physics</em> ↗</a></p>
 
-  <h4 class="acc-h">Discovering governing physics under uncertainty</h4>
-  <p>Equation-discovery methods treat a system's unknown coefficients as fixed quantities corrupted
-    only by sensor noise. Real systems violate this: viscosity, feedstock composition, and process
-    parameters vary intrinsically from run to run. Our <strong>stochastic inverse physics
-    discovery</strong> framework treats the coefficients themselves as random variables, matching
-    the push-forward of posterior samples to the observed data distribution.</p>
-  <p><em>Major finding:</em> separating genuine system variability from measurement noise is what
-    makes structural recovery reliable. Across ecological, chaotic, and experimental fluid systems,
-    the method recovers the correct set of physics terms without spurious inclusions where
-    competing approaches either invent higher-order terms or drop essential ones — and its credible
-    intervals stay calibrated instead of collapsing. Published in <em>Communications
-    Physics</em>.</p>
-
-  <h4 class="acc-h">Generative models for molecular and materials discovery</h4>
-  <p>Chemical space is far too large to search by intuition. We use goal-directed generative
-    models — graph-based reinforcement learning and, more recently, adjoint matching on pretrained
-    molecular foundation models — to propose candidate molecules optimized for target properties,
-    such as functional groups that impart self-healing behavior to a host polymer without
-    sacrificing mechanical strength.</p>
-  <p><em>Major finding:</em> property-driven rewards steer generation into regions of chemical
-    space the base model never reaches — but naively maximizing a property invites the model to
-    exploit loopholes, producing molecules with implausible ring strain. Constraining generation
-    toward synthesizable, physically realizable structures is as important as the objective itself,
-    and is where the interesting methodological work lies.</p>
+  <h4 class="acc-h">Generative models for molecular and materials discovery
+    <span class="tag">In progress</span></h4>
+  <p>Trial-and-error search over chemical space is infeasible given the number of possible
+    molecular structures. We use goal-directed generative models — graph-based reinforcement
+    learning, and more recently adjoint matching applied to pretrained molecular foundation models
+    in data-scarce regimes — to propose candidate structures optimized against multiple target
+    properties. A representative problem is identifying functional groups that impart self-healing
+    behavior to a host polymer through reversible interactions, without degrading its mechanical
+    strength or exceeding what is synthetically attainable.</p>
+  <p><em>Emerging finding:</em> property-driven rewards successfully steer generation into regions
+    of chemical space the base model does not reach on its own. But optimizing a property in
+    isolation invites the model to exploit loopholes — it satisfies the objective by constructing
+    strained, unstable ring systems that would never survive synthesis or attach stably to a polymer
+    backbone. Constraining generation toward physically realizable chemistry is therefore not a
+    postprocessing step but part of the objective itself, and is where the substantive
+    methodological work lies.</p>
 
   <div class="chips">
-    <span class="chip">Flow matching</span>
     <span class="chip">Push-forward inference</span>
+    <span class="chip">Sparse equation discovery</span>
     <span class="chip">Adjoint matching</span>
     <span class="chip">Reinforcement learning</span>
-    <span class="chip">Sparse equation discovery</span>
+    <span class="chip">Uncertainty quantification</span>
   </div>
-</div>
+        </div>
       </div>
     </article>
 
