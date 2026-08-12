@@ -313,19 +313,20 @@ ul.acc-list li:last-child{margin-bottom:0}
     <article class="acc-item">
       <h3>
         <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-1" id="acc-btn-1">
-          <span class="acc-title">AI &amp; Generative Modeling for Scientific Discovery</span>
-            <span class="acc-blurb">Causal inference via optimal transport, recovering governing equations under uncertainty, and generative design of molecules.</span>
+          <span class="acc-title">AI/ML for Scientific Discovery &amp; Causal Inference</span>
+          <span class="acc-blurb">Recovering governing equations under uncertainty, identifying causes from distributional shifts, and deciding what to measure next.</span>
           <span class="acc-icon" aria-hidden="true"></span>
         </button>
       </h3>
       <div class="acc-panel" id="acc-panel-1" role="region" aria-labelledby="acc-btn-1" hidden>
         <div class="acc-body">
-            <p>Scientific discovery is constrained less by data volume than by the cost of each observation
-    and the difficulty of extracting mechanism from noise. My group develops generative and inverse
-    models that recover interpretable structure — physical and chemical — from limited, uncertain
-    observations, rather than merely fitting them.</p>
+           <div class="acc-body">
+  <p>Scientific and engineering decisions are constrained less by data volume than by the cost of
+    each observation and the difficulty of extracting mechanism from noise. My group develops
+    methods that recover interpretable structure — physical laws, causal relationships, and the
+    value of the next experiment — from limited, uncertain data.</p>
 
-  <h4 class="acc-h">Discovering governing physics in the presence of uncertainty</h4>
+  <h4 class="acc-h">Discovering governing equations</h4>
   <p>Existing equation-discovery methods model observed data as corrupted solely by measurement
     noise, treating the unknown coefficients of a dynamical system as fixed quantities. Real systems
     violate this premise: viscosity and density vary across fluids, feedstock and process parameters
@@ -339,36 +340,82 @@ ul.acc-list li:last-child{margin-bottom:0}
     chaotic attractors, oscillatory systems, and experimental capillary infiltration, the method
     recovers the true set of active physics terms without spurious inclusions — where competing
     approaches either introduce higher-order terms that misrepresent the physics or omit essential
-    ones entirely. Because the framework attributes uncertainty to both sources rather than
-    absorbing variability into the noise estimate, its credible intervals remain calibrated instead
-    of artificially narrowing.</p>
+    ones entirely. Because uncertainty is attributed to both sources rather than absorbed into the
+    noise estimate, the resulting credible intervals remain calibrated instead of artificially
+    narrowing.</p>
   <p class="acc-more"><a href="https://www.nature.com/articles/s42005-026-02711-7"
     target="_blank" rel="noopener">Read more in <em>Communications Physics</em> ↗</a></p>
 
-  <h4 class="acc-h">Generative models for molecular and materials discovery
-    <span class="tag">In progress</span></h4>
-  <p>Trial-and-error search over chemical space is infeasible given the number of possible
-    molecular structures. We use goal-directed generative models — graph-based reinforcement
-    learning, and more recently adjoint matching applied to pretrained molecular foundation models
-    in data-scarce regimes — to propose candidate structures optimized against multiple target
-    properties. A representative problem is identifying functional groups that impart self-healing
-    behavior to a host polymer through reversible interactions, without degrading its mechanical
-    strength or exceeding what is synthetically attainable.</p>
-  <p><em>Emerging finding:</em> property-driven rewards successfully steer generation into regions
-    of chemical space the base model does not reach on its own. But optimizing a property in
-    isolation invites the model to exploit loopholes — it satisfies the objective by constructing
-    strained, unstable ring systems that would never survive synthesis or attach stably to a polymer
-    backbone. Constraining generation toward physically realizable chemistry is therefore not a
-    postprocessing step but part of the objective itself, and is where the substantive
-    methodological work lies.</p>
+  <h4 class="acc-h">Causal inference</h4>
+  <p>Observational data is compatible with many causal structures, which makes identifying the
+    source of an anomaly ill-posed without additional assumptions. Existing methods buy
+    identifiability by restricting the function class, assuming non-Gaussian noise, fitting models in
+    both directions, or requiring a known dependency graph. We look instead for sources of asymmetry
+    that require none of these. Our central observation is that when a system shifts from a normal to
+    a faulty state, transporting samples between the two distributions defines a <strong>velocity
+    field</strong>, learned via flow matching. The root cause is independent of the causal mechanism,
+    so its velocity is unconstrained; downstream variables are mediated by the mechanism, so their
+    velocities are stretched and compressed by its Jacobian. Causation leaves a signature in how a
+    variable <em>moves</em>, not merely in where it ends up.</p>
+  <p><em>Major finding:</em> the velocity field factorizes in the causal direction and provably
+    cannot factorize in reverse for any nonlinear mechanism — an identifiability result requiring no
+    causal graph, no bidirectional model fitting, and no assumptions on the noise distribution. On a
+    cloud microservice benchmark it ranks the true root cause among top candidates more reliably
+    than graph-based baselines, while being the only method that operates without knowledge of the
+    service dependency graph.</p>
+  <p class="acc-more"><a href="https://github.com/asiquebal22/RCA-FlowMatching/tree/main/Manuscript"
+    target="_blank" rel="noopener">Read the manuscript ↗</a></p>
+  <p>A parallel thread asks a related question in clinical settings: what minimal, plausible change
+    to a patient's profile would flip a model's prediction? A counterfactual is only useful if it is
+    <em>sparse</em> (few features altered, so the causal factor is isolated), <em>plausible</em>
+    (immutable attributes untouched), <em>diverse</em> (revealing distinct explanations rather than
+    variations on one), and <em>realistic</em> (drawn from the actual data distribution rather than
+    its tails). <strong>SCGAN</strong> achieves all four by generating counterfactuals adversarially
+    — with dropout training of the discriminator to promote sparsity, an explicit diversity penalty,
+    and feature masking to protect immutable attributes.</p>
+  <p><em>Major finding:</em> optimization-based counterfactual methods become computationally
+    prohibitive in high dimensions and tend to produce instances lying in the tails of the data
+    distribution — technically valid, clinically implausible. Generating from the learned
+    distribution instead yields explanations that are both realistic and actionable. Applied to
+    pre-operative breast MRI, the method isolates a small set of imaging and molecular features
+    causally linked to treatment response, pointing toward decisions an oncologist can actually
+    act on.</p>
+  <p class="acc-more"><a href="https://doi.org/10.1109/TASE.2023.3333788"
+    target="_blank" rel="noopener">Read more in <em>IEEE TASE</em> ↗</a></p>
+
+  <h4 class="acc-h">Active learning</h4>
+  <p>When each experiment consumes material, instrument time, or a patient's participation, the
+    governing question is what to measure next. Acquisition functions in the literature carry an
+    implicit bias: some spread queries uniformly across unexplored space, others concentrate near
+    sharp changes in the response. Methods that attempt both typically fix the balance in advance or
+    decay it on a preset schedule. We developed <strong>BHEEM</strong>, a Bayesian hierarchical
+    approach that treats the exploration–exploitation trade-off as a random variable and updates its
+    posterior as data accumulates — capturing both the noise within each query stage and the shifting
+    demands of the function across stages. Since the likelihood is intractable, we formulate an
+    approximate Bayesian computation scheme based on the linear dependence of candidate queries in
+    feature space.</p>
+  <p><em>Major finding:</em> no single trade-off value works well across functions, or even across
+    iterations of the same function — which is precisely why fixing it in advance underperforms. By
+    inferring the balance dynamically, the method converges in fewer queries than either pure
+    strategy and never gets trapped in one mode. Demonstrated on simulated benchmarks and on
+    predicting lattice constants of MAX-phase materials from composition and elastic properties.</p>
+  <p class="acc-more"><a href="https://doi.org/10.1080/24725854.2024.2332910"
+    target="_blank" rel="noopener">Read more in <em>IISE Transactions</em> ↗</a></p>
+  <p>Related work extends sequential decision-making to partially observed settings, accelerating
+    point-based value iteration for POMDPs through active sampling of belief points and Gaussian
+    process regression — making planning tractable where exhaustive belief enumeration is not.</p>
+  <p class="acc-more"><a href="https://arxiv.org/abs/2503.08982"
+    target="_blank" rel="noopener">Read more in <em>JAIR</em> ↗</a></p>
 
   <div class="chips">
     <span class="chip">Push-forward inference</span>
-    <span class="chip">Sparse equation discovery</span>
-    <span class="chip">Adjoint matching</span>
-    <span class="chip">Reinforcement learning</span>
-    <span class="chip">Uncertainty quantification</span>
+    <span class="chip">Flow matching</span>
+    <span class="chip">Optimal transport</span>
+    <span class="chip">Counterfactuals</span>
+    <span class="chip">Bayesian hierarchical models</span>
+    <span class="chip">Approximate Bayesian computation</span>
   </div>
+</div>
         </div>
       </div>
     </article>
