@@ -422,36 +422,77 @@ ul.acc-list li:last-child{margin-bottom:0}
 
     <!-- ---- 2. Causal Inference & Interpretability ---- -->
     <article class="acc-item">
-      <h3>
-        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-2" id="acc-btn-2">
-          <span class="acc-title">Causal Inference &amp; Interpretability</span>
-          <span class="acc-blurb">Counterfactual explanation, root-cause analysis, and models built to be scrutinized.</span>
-          <span class="acc-icon" aria-hidden="true"></span>
-        </button>
-      </h3>
-      <div class="acc-panel" id="acc-panel-2" role="region" aria-labelledby="acc-btn-2" hidden>
-        <div class="acc-body">
-          <p>[Placeholder — overview paragraph for this theme.]</p>
+  <h3>
+    <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-2" id="acc-btn-2">
+      <span class="acc-title">Generative AI for Sciences</span>
+      <span class="acc-blurb">Proposing molecules worth synthesizing, hypotheses worth testing, and emulating microstructural evolution at a fraction of simulation cost.</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+  </h3>
+  <div class="acc-panel" id="acc-panel-2" role="region" aria-labelledby="acc-btn-2" hidden>
+    <div class="acc-body">
+      <p>Generative models are increasingly capable of proposing candidates — molecules, hypotheses,
+        microstructures — but proposing is not the hard part. The hard part is ensuring the proposals
+        are physically realizable, chemically synthesizable, and worth the cost of testing. That
+        constraint, rather than raw generative capacity, is where the methodological work lies.</p>
 
-          <h4 class="acc-h">Current directions</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — direction one.]</li>
-            <li>[Placeholder — direction two.]</li>
-          </ul>
+      <h4 class="acc-h">Molecular and materials discovery
+        <span class="tag">In progress</span></h4>
+      <p>Trial-and-error search over chemical space is infeasible given the number of possible
+        molecular structures. We use goal-directed generative models — graph-based reinforcement
+        learning, and more recently adjoint matching applied to pretrained molecular foundation
+        models in data-scarce regimes — to propose candidate structures optimized against multiple
+        target properties. A representative problem is identifying functional groups that impart
+        self-healing behavior to a host polymer through reversible interactions, without degrading
+        its mechanical strength or exceeding what is synthetically attainable.</p>
+      <p><em>Emerging finding:</em> property-driven rewards successfully steer generation into
+        regions of chemical space the base model does not reach on its own. But optimizing a property
+        in isolation invites the model to exploit loopholes — it satisfies the objective by
+        constructing strained, unstable ring systems that would never survive synthesis or attach
+        stably to a polymer backbone. Constraining generation toward physically realizable chemistry
+        is therefore not a postprocessing step but part of the objective itself.</p>
 
-          <h4 class="acc-h">Representative work</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — paper title, venue, year.]</li>
-          </ul>
+      <h4 class="acc-h">Hypothesis generation for materials design</h4>
+      <p>Before a candidate can be synthesized, someone has to propose it — and the space of
+        plausible hypotheses is far larger than any group can explore. We developed goal-driven,
+        constraint-guided LLM agents that generate materials hypotheses under explicit design
+        objectives and feasibility constraints, rather than producing unconstrained speculation.</p>
+      <p><em>Major finding:</em> the value of an LLM agent in this setting comes not from its
+        generative fluency but from how tightly its search is bounded. Agents given explicit goals
+        and constraints produce hypotheses that are substantively more useful than free-form
+        generation, which tends toward the plausible-sounding but unactionable.</p>
+      <p class="acc-more"><a href="https://aclanthology.org/2025.findings-naacl.420/"
+        target="_blank" rel="noopener">Read more in <em>Findings of NAACL</em> ↗</a></p>
 
-          <div class="chips">
-            <span class="chip">Counterfactuals</span>
-            <span class="chip">Optimal transport</span>
-            <span class="chip">Explainability</span>
-          </div>
-        </div>
+      <h4 class="acc-h">Emulating microstructural evolution</h4>
+      <p>Phase-field simulation of microstructural evolution is accurate but far too slow to place
+        inside a design loop. We build data-driven emulators that reproduce this evolution by first
+        finding a low-dimensional tensor decomposition of the microstructure, then learning its
+        dynamics in that reduced space — using nonlinear regression, or tensor-decomposed
+        convolutional and recurrent architectures where longer-range temporal structure matters.
+        Applied to spinodal decomposition and phase separation, and extended to predicting
+        electromigration-mediated damage in polycrystalline interconnects.</p>
+      <p><em>Major finding:</em> microstructural evolution is far lower-dimensional than its
+        pixel-level representation suggests. Once the right reduced coordinates are identified, the
+        dynamics become learnable from modest simulation data — and the emulator generalizes across
+        conditions rather than memorizing trajectories, which is what makes it usable for design
+        rather than merely for replay.</p>
+      <p class="acc-more">
+        <a href="https://doi.org/10.1016/j.commatsci.2023.112187" target="_blank" rel="noopener"><em>Computational Materials Science</em> ↗</a> ·
+        <a href="https://doi.org/10.1557/s43577-022-00443-x" target="_blank" rel="noopener"><em>MRS Bulletin</em> ↗</a> ·
+        <a href="https://link.springer.com/article/10.1007/s11664-023-10237-9" target="_blank" rel="noopener"><em>Journal of Electronic Materials</em> ↗</a>
+      </p>
+
+      <div class="chips">
+        <span class="chip">Adjoint matching</span>
+        <span class="chip">Reinforcement learning</span>
+        <span class="chip">LLM agents</span>
+        <span class="chip">Tensor decomposition</span>
+        <span class="chip">Phase-field emulation</span>
       </div>
-    </article>
+    </div>
+  </div>
+</article>
 
     <!-- ---- 3. Active Learning & Sequential Experimentation ---- -->
     <article class="acc-item">
