@@ -494,71 +494,89 @@ ul.acc-list li:last-child{margin-bottom:0}
   </div>
 </article>
 
-    <!-- ---- 3. Active Learning & Sequential Experimentation ---- -->
-    <article class="acc-item">
-      <h3>
-        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-3" id="acc-btn-3">
-          <span class="acc-title">Active Learning &amp; Sequential Experimentation</span>
-          <span class="acc-blurb">Deciding what to measure next when experiments are expensive and budgets are finite.</span>
-          <span class="acc-icon" aria-hidden="true"></span>
-        </button>
-      </h3>
-      <div class="acc-panel" id="acc-panel-3" role="region" aria-labelledby="acc-btn-3" hidden>
-        <div class="acc-body">
-          <p>[Placeholder — overview paragraph for this theme.]</p>
-
-          <h4 class="acc-h">Current directions</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — direction one.]</li>
-            <li>[Placeholder — direction two.]</li>
-          </ul>
-
-          <h4 class="acc-h">Representative work</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — paper title, venue, year.]</li>
-          </ul>
-
-          <div class="chips">
-            <span class="chip">Bayesian optimization</span>
-            <span class="chip">Exploration–exploitation</span>
-            <span class="chip">POMDPs</span>
-          </div>
-        </div>
-      </div>
-    </article>
+    
 
     <!-- ---- 4. Other AI/ML Applications ---- -->
-    <article class="acc-item">
-      <h3>
-        <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-4" id="acc-btn-4">
-          <span class="acc-title">Other AI/ML Applications</span>
-          <span class="acc-blurb">Manufacturing and digital twins, health care, and physics-informed modeling.</span>
-          <span class="acc-icon" aria-hidden="true"></span>
-        </button>
-      </h3>
-      <div class="acc-panel" id="acc-panel-4" role="region" aria-labelledby="acc-btn-4" hidden>
-        <div class="acc-body">
-          <p>[Placeholder — overview paragraph for this theme.]</p>
+<article class="acc-item">
+  <h3>
+    <button class="acc-trigger" aria-expanded="false" aria-controls="acc-panel-3" id="acc-btn-3">
+      <span class="acc-title">Other AI/ML Foundations &amp; Applications</span>
+      <span class="acc-blurb">Transformers for geometric reasoning, unsupervised structure discovery in signals and images, and digital twins under hardware constraints.</span>
+      <span class="acc-icon" aria-hidden="true"></span>
+    </button>
+  </h3>
+  <div class="acc-panel" id="acc-panel-3" role="region" aria-labelledby="acc-btn-3" hidden>
+    <div class="acc-body">
+      <p>Methods earn trust by surviving contact with real instruments, real bandwidth limits, and
+        real production constraints. This thread covers foundational work and applications that both
+        motivate and stress-test the methodological research above.</p>
 
-          <h4 class="acc-h">Current directions</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — direction one.]</li>
-            <li>[Placeholder — direction two.]</li>
-          </ul>
+      <h4 class="acc-h">Transformers for geometric and sequential reasoning</h4>
+      <p>Attention-based architectures are well suited to problems where the relationship between
+        distant elements matters more than local structure. We apply them to translating orthographic
+        freehand sketches into 3D CAD models — a task requiring the model to reason jointly across
+        multiple views, infer the geometric primitives a designer intended, and produce output that
+        is parametrically editable rather than merely visually similar. Related work uses learned
+        sequence models to emulate thermal fields in additive manufacturing, replacing expensive
+        finite-element solves inside the design loop.</p>
+      <p><em>Why it matters:</em> a generated mesh is a dead end for a designer; a generated
+        primitive sequence is something they can modify. Framing CAD reconstruction as structured
+        generation rather than surface fitting is what makes the output usable downstream.</p>
+      <p class="acc-more"><a href="https://drive.google.com/file/d/1FFtr5CnxWayWtxhSX8_o_r97NbT2SSqQ/view?usp=sharing"
+        target="_blank" rel="noopener">Read the manuscript ↗</a></p>
 
-          <h4 class="acc-h">Representative work</h4>
-          <ul class="acc-list">
-            <li>[Placeholder — paper title, venue, year.]</li>
-          </ul>
+      <h4 class="acc-h">Unsupervised learning</h4>
+      <p>Labels are scarce or absent in most scientific measurement settings, which makes
+        unsupervised structure discovery foundational rather than optional. We established
+        <strong>consistency guarantees for the max-flow problem</strong> as a route to unsupervised
+        image segmentation — showing that a graph-cut formulation, properly estimated, converges to
+        the correct partition without supervision. Related work detects change in complex dynamical
+        systems using intrinsic phase and amplitude synchronization, and learns acoustic emission
+        signatures from nanoindentation-based lithography to characterize microstructure directly
+        from the sound a process makes.</p>
+      <p><em>Why it matters:</em> segmentation and change detection methods are usually evaluated
+        empirically and adopted on faith. Establishing statistical consistency changes what can be
+        claimed about a result — and matters most precisely in the scientific settings where no
+        ground-truth labels exist to fall back on.</p>
+      <p class="acc-more">
+        <a href="https://doi.org/10.1109/TPAMI.2020.3039745" target="_blank" rel="noopener"><em>IEEE TPAMI</em> ↗</a> ·
+        <a href="https://doi.org/10.1109/TSP.2020.3014423" target="_blank" rel="noopener"><em>IEEE Trans. Signal Processing</em> ↗</a> ·
+        <a href="https://doi.org/10.1016/j.triboint.2019.106074" target="_blank" rel="noopener"><em>Tribology International</em> ↗</a>
+      </p>
 
-          <div class="chips">
-            <span class="chip">Digital twins</span>
-            <span class="chip">Additive manufacturing</span>
-            <span class="chip">Physics-informed ML</span>
-          </div>
-        </div>
+      <h4 class="acc-h">Digital twins under bandwidth and hardware constraints</h4>
+      <p>A digital twin is only as good as the sensor data reaching it — and in practice that data
+        must cross limited network bandwidth and be processed on constrained edge hardware. Naive
+        downsampling discards exactly the transients that matter for diagnosis. We develop
+        <strong>vector quantization</strong> approaches that learn a compact discrete codebook for
+        complex sensor streams, preserving diagnostically relevant structure at a fraction of the
+        transmitted volume. Related work uses complex-valued autoencoders for machinery audio,
+        operating on the full time–frequency representation rather than discarding phase.</p>
+      <p><em>Why it matters:</em> compression for digital twins is not a generic signal-processing
+        problem. What must be preserved is defined by the downstream diagnostic task, which means the
+        representation should be learned against that task rather than against reconstruction error
+        alone.</p>
+      <p class="acc-more"><a href="REPLACE_WITH_URL"
+        target="_blank" rel="noopener">Complex-Valued Autoencoder for Machinery Audio Generation ↗</a></p>
+
+      <h4 class="acc-h">Applications in health care</h4>
+      <p>Beyond the causal inference work, this includes prediction of BRCA and other genetic
+        mutations from combined -omics and imaging data in collaboration with Mayo Clinic;
+        explainability and bias questions that arise when clinical decision-support models enter
+        real workflows; and generative AI for music therapy intervention in nonpharmacological
+        dementia care, developed through community-based participatory research.</p>
+
+      <div class="chips">
+        <span class="chip">Transformers</span>
+        <span class="chip">CAD generation</span>
+        <span class="chip">Graph cuts</span>
+        <span class="chip">Vector quantization</span>
+        <span class="chip">Edge computing</span>
+        <span class="chip">Signal processing</span>
       </div>
-    </article>
+    </div>
+  </div>
+</article>
 
   </div>
 </section>
