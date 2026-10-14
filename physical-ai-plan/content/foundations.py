@@ -3,6 +3,7 @@
 from literature import CANON
 
 RESOURCES = {
+    "sutton": ("Sutton & Barto · Reinforcement Learning, 2nd ed.", "https://mitpress.mit.edu/9780262039246/reinforcement-learning/"),
     "spinning": ("Spinning Up · core RL concepts", "https://spinningup.openai.com/en/latest/spinningup/rl_intro.html"),
     "pg": ("Spinning Up · policy gradients", "https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html"),
     "sac": ("Spinning Up · SAC", "https://spinningup.openai.com/en/latest/algorithms/sac.html"),
@@ -39,6 +40,10 @@ RESOURCES = {
     "cosmos-policy-code": ("Cosmos Policy · implementation", "https://github.com/NVlabs/cosmos-policy"),
     "cosmos-cookbook": ("Cosmos Policy · post-training recipe", "https://nvidia-cosmos.github.io/cosmos-cookbook/recipes/post_training/predict2/cosmos_policy/post_training.html"),
     "evo-wam": ("EVO-WAM · video/action verification", "https://arxiv.org/abs/2609.38057"),
+    "wmpo-code": ("WMPO · implementation", "https://github.com/WM-PO/WMPO"),
+    "fpo-code": ("Flow Policy Optimization · implementation", "https://github.com/akanazawa/fpo"),
+    "flow-grpo-code": ("Flow-GRPO · implementation", "https://github.com/yifan123/flow_grpo"),
+    "dsrl-code": ("DSRL · diffusion-policy latent RL", "https://github.com/ajwagen/dsrl"),
 }
 
 RESOURCES.update({p[0]: (p[1], p[3]) for p in CANON})
@@ -58,7 +63,7 @@ MODULES = [
       derive=["Write and solve a small Bellman system; check the Bellman residual.", "Derive REINFORCE from the likelihood-ratio identity and show why a state-dependent baseline preserves its expectation.", "Calculate GAE by hand on a short trajectory, distinguishing a terminal state from a truncated rollout."],
       implement="Solve a tiny blocked gridworld exactly, then add a new wall while keeping the goal fixed. Compare evaluating the old policy with replanning the policy. Use the included Bellman example before a neural implementation.",
       interview=["Why can a policy have high training return yet fail under a small obstruction?", "What is the bias–variance trade-off in TD learning?", "How does partial observability change your agent design?"],
-      resources=["spinning", "pg", "gym", "dyna", "worldmodels"], gate="Derive the Bellman equation and policy gradient unaided; produce a reproducible tabular result and explain the Dyna learning/planning loop."),
+      resources=["sutton", "spinning", "pg", "murphy", "lehmann", "gym", "dyna", "worldmodels"], gate="Derive the Bellman equation and policy gradient unaided; produce a reproducible tabular result and explain the Dyna learning/planning loop. Use Sutton & Barto chapters 3–6/13 or Spinning Up for a first explanation, not as two complete parallel courses."),
  dict(id="actor-critic", title="PPO, SAC and stable optimization", weeks="2–4", level="Core", hours="14–18", lab="ppo",
       question="Which policy update is appropriate for continuous robot actions?",
       topics=["PPO: rollout collection, old log-probabilities, clipped objective, value loss, entropy and advantage normalization.", "SAC: twin critics, target networks, replay, entropy temperature and reparameterized tanh-Gaussian actions.", "Why clipping is not a hard trust-region guarantee; why off-policy learning is attractive when robot samples are expensive.", "Exploding values, observation normalization, reward scale, update-to-data ratio and gradient/debugging diagnostics."],
@@ -100,7 +105,7 @@ MODULES = [
       derive=["Define predicted-minus-observed success gap without assuming the cause is intentional self-deception.", "Write one simple acquisition score using predicted success and ensemble disagreement; specify candidate-generation and normalization.", "Derive a Bernoulli standard error and explain why many trials from one layout are not many independent tasks."],
       implement="Compare active selection with random selection from the same candidate pool and the same real-trial budget. Fit score weights on development data only. Keep the final evaluation set inaccessible to trial selection and stopping decisions.",
       interview=["Can all ensemble members confidently share the same error?", "What does active selection optimize, and what would falsify its benefit?", "Why can a lower optimism gap coexist with a worse success rate?"],
-      resources=["fail2progress", "reoi", "fosp", "worldcloner"], gate="One reproducible budget curve with uncertainty, separate data splits and a complete robot/compute cost ledger."),
+      resources=["deep-ensembles", "bald", "batchbald", "plan2explore", "mopo", "morel", "fail2progress", "reoi", "fosp", "worldcloner"], gate="One reproducible budget curve with uncertainty, separate data splits and a complete robot/compute cost ledger."),
  dict(id="systems", title="Research engineering and deployment", weeks="1–12", level="Continuous practice", hours="Integrated", lab="logging",
       question="Can someone else rerun, debug and trust your experiment?",
       topics=["PyTorch shapes, autograd boundaries, checkpointing, evaluation mode, vectorized environments and reproducible random generators.", "Dataset manifests, immutable split IDs, versioned configs, model hashes and replay-buffer provenance.", "Training throughput, GPU memory, inference latency, parallel rollout generation and stale observations.", "Robot interfaces, observation/action contracts, episode logging, reset time, command limits and recovery rollback."],

@@ -1,4 +1,4 @@
-# Fieldwork / Physical AI
+# Physical AI study and research checklist
 
 A detailed three-month study, coding, research and interview preparation website.
 Outreach begins in **week 7, after six full weeks**. The core schedule contains
@@ -28,6 +28,13 @@ it is not synchronized to GitHub or another device.
   V-JEPA, DINO-WM and the historical model-based RL and robot-policy lineages.
 - Two bounded foundation-model practice blocks inside the existing research budget.
 - Closest-project reading notes with model classifications and evidence boundaries.
+- A document-style weekly read / implement / produce checklist and a research
+  checklist organized by questions, study, setup, data, models, experiments and release.
+- Consistent **Critical / If time permits / Optional** labels. Priority and reading
+  depth are separate; a critical survey does not require a full system reproduction.
+- Saved checkboxes for papers, daily sessions, lab steps and project actions, with
+  critical progress shown separately from all tracked items. Previous checkbox IDs
+  and browser storage are preserved.
 - Interview questions, coding exercises and career preparation beginning privately.
 - A resource library linking primary documentation and author repositories.
 

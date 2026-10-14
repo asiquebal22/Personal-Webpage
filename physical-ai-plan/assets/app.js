@@ -13,13 +13,22 @@
     setTimeout(() => el.remove(), 4500);
   }
   const allIDs = window.PLAN_CHECKS || [];
+  const priorities = window.PLAN_PRIORITIES || {};
+  const criticalIDs = allIDs.filter(id => !priorities[id] || priorities[id] === 'Critical');
   function paintProgress() {
     const count = allIDs.filter(id => state.checks[id] === true).length;
-    document.querySelectorAll('[data-progress-text]').forEach(el => el.textContent = `${count} / ${allIDs.length}`);
-    document.querySelectorAll('[data-progress-fill]').forEach(el => { el.style.width = `${allIDs.length ? count / allIDs.length * 100 : 0}%`; });
+    const criticalCount = criticalIDs.filter(id => state.checks[id] === true).length;
+    document.querySelectorAll('[data-progress-text]').forEach(el => el.textContent = `${criticalCount} / ${criticalIDs.length}`);
+    document.querySelectorAll('[data-progress-fill]').forEach(el => { el.style.width = `${criticalIDs.length ? criticalCount / criticalIDs.length * 100 : 0}%`; });
+    document.querySelectorAll('[data-all-progress-text]').forEach(el => el.textContent = `All tracked items: ${count} / ${allIDs.length}`);
     document.querySelectorAll('[data-check]').forEach(input => {
       input.checked = state.checks[input.dataset.check] === true;
       input.closest('label')?.classList.toggle('checked', input.checked);
+    });
+    document.querySelectorAll('[data-week-progress]').forEach(el => {
+      const row=el.closest('.week-row');
+      const ids=[...new Set([...row.querySelectorAll('[data-check]')].map(x=>x.dataset.check))].filter(id=>priorities[id]==='Critical');
+      el.textContent=`Critical: ${ids.filter(id=>state.checks[id]===true).length} / ${ids.length}`;
     });
   }
   document.querySelectorAll('[data-check]').forEach(input => input.addEventListener('change', () => {
@@ -97,7 +106,7 @@
     try { id=decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
     const paper=document.getElementById(id);
     if(!paper || paper.tagName!=='DETAILS') return;
-    if(paper.classList.contains('hidden')) {
+    if(paper.classList.contains('hidden') || paper.closest('[data-category]')?.classList.contains('hidden')) {
       document.querySelectorAll('[data-category]').forEach(el=>el.classList.remove('hidden'));
       document.querySelectorAll('[data-filter]').forEach(el=>{const selected=el.dataset.filter==='All';el.classList.toggle('active',selected);el.setAttribute('aria-pressed',String(selected));});
     }
