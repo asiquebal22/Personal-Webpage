@@ -1,0 +1,1432 @@
+{
+  "start": "2026-10-14",
+  "weeks": [
+    {
+      "n": 1,
+      "title": "Establish the foundations and the experiment contract",
+      "phase": "Foundations",
+      "hours": [
+        18,
+        10,
+        10,
+        4
+      ],
+      "modules": [
+        "rl",
+        "robotics",
+        "systems"
+      ],
+      "labs": [
+        "bellman",
+        "geometry",
+        "logging"
+      ],
+      "papers": [
+        "daydreamer"
+      ],
+      "aim": "Understand the robot-learning loop and start the research infrastructure immediately. Diagnose knowledge gaps instead of redoing material already mastered.",
+      "days": [
+        [
+          "Diagnose and scope",
+          "Spend 90 minutes on the self-assessment. Review MDPs/returns; specify one obstructed manipulation task, its action interface and success rubric. Create the experiment repository and environment manifest."
+        ],
+        [
+          "Bellman and blockage",
+          "Implement the blocked-gridworld example. Evaluate a frozen policy before and after a wall change, then replan. Write what changed: environment state, dynamics, policy or action sequence."
+        ],
+        [
+          "Geometry and commands",
+          "Implement planar FK/Jacobian checks. Review frame composition and calibration. Inspect the physical arm interface or simulator and record action units, joint limits and control frequency."
+        ],
+        [
+          "Policy gradients",
+          "Derive REINFORCE and a baseline. Work through a hand-computed trajectory. Install only the small educational stack in an isolated environment; identify GPU requirements for the research stack."
+        ],
+        [
+          "Task and recorder",
+          "Create/reset the simulated scene. Record a scripted policy episode and outcome. Read DayDreamer's problem/method/experiments and sketch how policy learning differs from MPC."
+        ],
+        [
+          "Integrate and explain",
+          "Replay an episode, export an initial manifest, and record a five-minute explanation of the full observation→policy→controller loop. Review the week's assumptions and unresolved hardware access issues."
+        ]
+      ],
+      "outputs": [
+        "One-page research question and nominal/blocked task specification.",
+        "Working tabular obstruction demo and geometry checks.",
+        "One logged simulator episode and a reproducibility manifest."
+      ],
+      "gate": "A scripted controller can complete one nominal episode and produce replayable data. If hardware is unavailable, continue in simulation while arranging access; do not postpone the model-learning pilot.",
+      "explain": "Why does a blockage sometimes require replanning, sometimes a policy update, and sometimes a better world model?"
+    },
+    {
+      "n": 2,
+      "title": "Understand policy optimization; finish the first vertical slice",
+      "phase": "Foundations",
+      "hours": [
+        18,
+        12,
+        8,
+        4
+      ],
+      "modules": [
+        "actor-critic",
+        "rl",
+        "systems"
+      ],
+      "labs": [
+        "ppo",
+        "sac"
+      ],
+      "papers": [
+        "fosp"
+      ],
+      "aim": "Implement enough RL to defend the equations and establish a repeatable task pipeline before increasing model scale.",
+      "days": [
+        [
+          "GAE and PPO",
+          "Implement returns/GAE and the PPO update. Check terminal versus truncated trajectories manually. Inspect CleanRL's rollout-buffer layout."
+        ],
+        [
+          "A complete RL run",
+          "Run a small reference PPO experiment and save all hyperparameters. Inspect losses, entropy, approximate KL and gradient norms. Fix wrapper issues before tuning learning rates."
+        ],
+        [
+          "SAC and replay",
+          "Derive the soft Q target and inspect a reference SAC trainer. Run a continuous-control smoke experiment. Explain replay reuse, target networks and tanh action scaling."
+        ],
+        [
+          "Robot data pathway",
+          "Finish observation/action logging and the reset procedure. Acquire a few nominal and obstructed diagnostic rollouts. Confirm both success and failure labels are observable."
+        ],
+        [
+          "Read the closest adaptation baseline",
+          "Read FOSP's method, real-robot section and limitations. Distinguish learning from real interaction plus imagination from an imagined-only adaptation claim."
+        ],
+        [
+          "Gate 1 review",
+          "Demonstrate reset→observe→act→record→replay in the actual task. Present a tensor-level PPO explanation and choose the continuous-control implementation to reuse."
+        ]
+      ],
+      "outputs": [
+        "Original PPO update with numerical checks.",
+        "Reference continuous-control run with pinned revision.",
+        "End-to-end task recording, including at least one blocked failure."
+      ],
+      "gate": "The task pipeline and a continuous-action actor execute reliably. Fix integration or simplify the scene now; larger model training does not solve a broken interface.",
+      "explain": "How do PPO and SAC differ, and why are imagined transitions not automatically equivalent to real off-policy data?"
+    },
+    {
+      "n": 3,
+      "title": "Build the base policy and the first predictive model",
+      "phase": "Foundations",
+      "hours": [
+        14,
+        10,
+        14,
+        4
+      ],
+      "modules": [
+        "imitation",
+        "world-models",
+        "planning"
+      ],
+      "labs": [
+        "bc",
+        "dynamics"
+      ],
+      "papers": [
+        "daydreamer",
+        "replan"
+      ],
+      "aim": "Get the smallest scientifically useful policy/world-model pair running. Maintain the same task across learning exercises and research.",
+      "days": [
+        [
+          "Data and splits",
+          "Define training, development/acquisition and held-out test layout IDs before collection. Generate a modest simulation demonstration set. Measure real reset/labeling time before committing to hardware episode counts."
+        ],
+        [
+          "Behavior cloning",
+          "Train the nominal BC controller, save normalization statistics, and evaluate closed-loop rollouts. Inspect failure videos rather than choosing checkpoints from training loss alone."
+        ],
+        [
+          "Learn transitions",
+          "Fit a small delta-state dynamics ensemble. Keep obstacle pose and relevant contact state observable. Validate one-step transitions on the development split."
+        ],
+        [
+          "Read neural world models",
+          "Trace Dreamer posterior/prior and actor training; inspect DINO-WM's action-conditioned feature prediction. Choose one feasible observation/model route using data access and measured runtime."
+        ],
+        [
+          "Paired rollouts",
+          "Compare 5/10/20-step model predictions with actual simulator execution from the same start and actions. Read RePLan's obstruction cases as behavior references, not as neural-world-model baselines."
+        ],
+        [
+          "Architecture decision",
+          "Freeze the core experiment interface and choose compact actor plus learned dynamics. Document the upgrade path to visual latents or a pretrained world-action model without making it a dependency."
+        ]
+      ],
+      "outputs": [
+        "Nominal BC checkpoint and dataset/split card.",
+        "Action-conditioned dynamics ensemble and multi-step error report.",
+        "Architecture decision with measured memory/runtime and explicit model-family labels."
+      ],
+      "gate": "A usable nominal baseline and action-sensitive model predictions exist. If visual modeling is not viable, run the core diagnostic with state observations and label that limitation explicitly.",
+      "explain": "What information would a world model need to faithfully simulate your newly introduced blocker?"
+    },
+    {
+      "n": 4,
+      "title": "Make imagination useful; establish the planning baseline",
+      "phase": "Foundations",
+      "hours": [
+        14,
+        8,
+        16,
+        4
+      ],
+      "modules": [
+        "world-models",
+        "planning",
+        "generative"
+      ],
+      "labs": [
+        "diffusion",
+        "mpc"
+      ],
+      "papers": [
+        "reoi",
+        "rise"
+      ],
+      "aim": "Verify the model can support decisions and build the strongest simple alternative to policy fine-tuning.",
+      "days": [
+        [
+          "Action-conditioned validity",
+          "Test zero, permuted and deliberately colliding actions. Check whether prediction errors preserve or erase the obstacle. Add failure data only from training/development scenes."
+        ],
+        [
+          "CEM-MPC",
+          "Implement receding-horizon search on the learned model. Log horizon, model calls, elapsed time and the action prefix executed. Keep exact simulator dynamics out of this baseline."
+        ],
+        [
+          "Generative-policy mini-lab",
+          "Implement the two-route action denoiser/flow example. Inspect Diffusion Policy and openpi interfaces; separate policy generation from world-model prediction."
+        ],
+        [
+          "Read model failure carefully",
+          "Read ReOI's obstacle erasure examples and ten-trial evaluation. Read RISE's policy-improvement loop and compute requirements. Record what these papers do not establish."
+        ],
+        [
+          "Model and planner evaluation",
+          "Run nominal and obstructed development trials. Compare frozen policy, random shooting and learned-model MPC. Identify whether failures are model, search or controller failures."
+        ],
+        [
+          "Gate 2 review",
+          "Produce a short paired imagination/execution clip and a planner result. Set a small, measured adaptation-time budget and choose a residual actor implementation for Week 5."
+        ]
+      ],
+      "outputs": [
+        "A learned-world-model MPC baseline.",
+        "Paired predicted/executed blockage examples.",
+        "An explicit decision about whether the model is adequate for an imagined-training pilot."
+      ],
+      "gate": "The model distinguishes important failed actions from successful ones on development scenes. If it cannot, improve data/representation before optimizing a policy against it.",
+      "explain": "Why might a perfect-looking predicted video still be a poor training environment?"
+    },
+    {
+      "n": 5,
+      "title": "Implement the dream→update→execute loop",
+      "phase": "Method",
+      "hours": [
+        12,
+        6,
+        20,
+        4
+      ],
+      "modules": [
+        "world-models",
+        "actor-critic",
+        "uncertainty"
+      ],
+      "labs": [
+        "imagination"
+      ],
+      "papers": [
+        "rise",
+        "fosp"
+      ],
+      "aim": "Demonstrate genuine policy parameter adaptation from imagined experience, with a fixed model during each adaptation round.",
+      "days": [
+        [
+          "Specify the update",
+          "Define residual action bounds, replay mixture, rollout horizon, reward/cost terms and actor/critic update counts. Start every condition from the same base actor checkpoint."
+        ],
+        [
+          "Synthetic transitions",
+          "Seed short model rollouts from actual development observations. Store predicted transitions in a separate buffer and tag model version, rollout depth and uncertainty."
+        ],
+        [
+          "Fine-tune the actor",
+          "Implement the chosen SAC-style update using synthetic transitions and original replay. Check actor weight changes, model freezing and critic targets. Profile a complete update round."
+        ],
+        [
+          "Return to execution",
+          "Run the adapted actor in the actual simulator, then hardware if the pipeline is ready. Compare measured success with its imagined estimate and save failure videos."
+        ],
+        [
+          "Retention and limits",
+          "Evaluate nominal scenes after adaptation. Test short versus longer imagined horizons. Keep every time limit or rollback in the results, rather than removing unsuccessful runs."
+        ],
+        [
+          "Pilot interpretation",
+          "Compare no adaptation, MPC and imagined fine-tuning on a small development suite. Write one page explaining whether the bottleneck is model fidelity, exploration, credit assignment or optimizer stability."
+        ]
+      ],
+      "outputs": [
+        "A reproducible imagination-only actor update.",
+        "Measured adaptation latency and real/simulator outcome comparison.",
+        "A retention check and one documented failure case."
+      ],
+      "gate": "At least one complete round executes and yields interpretable measurements. Improvement is a hypothesis, not a gate that justifies changing the test after seeing results.",
+      "explain": "Where does the policy gradient or synthetic replay signal come from when the world model is frozen?"
+    },
+    {
+      "n": 6,
+      "title": "Add real verification and freeze the research question",
+      "phase": "Method",
+      "hours": [
+        10,
+        6,
+        22,
+        4
+      ],
+      "modules": [
+        "uncertainty",
+        "systems"
+      ],
+      "labs": [
+        "acquisition"
+      ],
+      "papers": [
+        "fail2progress",
+        "resync"
+      ],
+      "aim": "Finish the six-week preparation period with an honest pilot and a defensible experimental plan. Outreach has not started yet.",
+      "days": [
+        [
+          "Detect and represent blockage",
+          "Define stagnation/collision/progress checks on development data. Reobserve before adaptation; distinguish current latent-state inference from changing model weights."
+        ],
+        [
+          "Generate candidates",
+          "Build a legal correction-trial pool independent of held-out tests. Compare predicted outcomes across ensemble members and compute an initial disagreement score."
+        ],
+        [
+          "Verify physically",
+          "Run a small random correction batch, add executed transitions, update the world model between rounds, then repeat imagined actor adaptation. Count reset and human time."
+        ],
+        [
+          "Read related correction work",
+          "Read Fail2Progress's targeted-data method and constrained-shelf qualitative result. Read ReSYNC's skill/concept learning and curriculum assumptions. Update the novelty matrix."
+        ],
+        [
+          "Preregister comparisons",
+          "Fix primary methods, budgets, seeds, evaluation layout IDs, success rubric, time caps and stopping rules. Narrow the claim if the pilot shows replanning is sufficient."
+        ],
+        [
+          "Gate 3 and private rehearsal",
+          "Create a private 5–10 minute research presentation and a clean pilot demo. Finish the CV/project summary and target-role list; do not send outreach until Week 7."
+        ]
+      ],
+      "outputs": [
+        "Complete adaptation + real-correction loop.",
+        "Frozen experiment protocol and literature/novelty matrix.",
+        "Private demo and interview presentation ready for the following week."
+      ],
+      "gate": "Decide the central claim from pilot evidence: faster recovery, better transfer/retention, or better budgeted model correction. If fine-tuning adds no benefit over MPC, report that and pivot to a justified narrower question.",
+      "explain": "Why does your method need a few real trials, and which trials should it choose?"
+    },
+    {
+      "n": 7,
+      "title": "Start outreach and run the primary comparison",
+      "phase": "Evidence",
+      "hours": [
+        10,
+        4,
+        22,
+        6
+      ],
+      "modules": [
+        "uncertainty",
+        "planning"
+      ],
+      "labs": [
+        "acquisition"
+      ],
+      "papers": [
+        "fail2progress",
+        "fosp"
+      ],
+      "aim": "Begin researcher conversations after six full weeks while generating the first budget-matched results.",
+      "days": [
+        [
+          "Outreach begins",
+          "Prepare a concise CV, one-page research summary and preliminary demo. Identify five well-matched teams. Send a small, tailored first batch yourself; track feedback separately from research outcomes."
+        ],
+        [
+          "Lock candidates and budgets",
+          "Run active and random selection from the same candidate generator. Verify consistent scoring, legal reset states and real-trial accounting."
+        ],
+        [
+          "Primary methods, seed 1",
+          "Evaluate frozen policy, same-model MPC, imagined adaptation and adaptation with random/active correction. Use the prespecified development/evaluation separation."
+        ],
+        [
+          "Primary methods, further seeds",
+          "Repeat simulation runs with independent initializations and training seeds. Log compute and adaptation time. Run a limited hardware feasibility block where appropriate."
+        ],
+        [
+          "Coding and research mock",
+          "Practice tensor/replay-buffer coding and a 10-minute project explanation. Explain the strongest baseline and what result would invalidate the method."
+        ],
+        [
+          "Weekly evidence review",
+          "Generate a preliminary real-success-versus-correction-budget plot with visible uncertainty and sample counts. Tag it preliminary; record all discrepancies and failures."
+        ]
+      ],
+      "outputs": [
+        "First outreach batch after the six-week boundary.",
+        "Preliminary budget-matched comparison.",
+        "An updated failure taxonomy and experiment ledger."
+      ],
+      "gate": "The primary comparison is reproducible and fairly budgeted. If selection or labeling is unstable, fix it before collecting more trials.",
+      "explain": "How is your experiment different from choosing the best imagined trajectory?"
+    },
+    {
+      "n": 8,
+      "title": "Test generalization and the value of active selection",
+      "phase": "Evidence",
+      "hours": [
+        8,
+        4,
+        23,
+        7
+      ],
+      "modules": [
+        "uncertainty",
+        "imitation"
+      ],
+      "labs": [
+        "evaluation"
+      ],
+      "papers": [
+        "reoi",
+        "resync"
+      ],
+      "aim": "Determine whether improvement transfers beyond the correction layouts and whether active selection actually beats random selection.",
+      "days": [
+        [
+          "Held-out evaluation",
+          "Evaluate the fixed methods on unseen blocker positions and orientations. Keep new geometries as a separately labeled harder split if feasible."
+        ],
+        [
+          "Budget curve",
+          "Run nested correction budgets with matched checkpoints. Evaluate at each prespecified point without adding test data to training or choosing trial candidates."
+        ],
+        [
+          "Repeat uncertainty estimates",
+          "Collect independent simulation seeds and enough layout diversity to expose variability. Use bootstrap intervals at layout level; report per-layout outcomes."
+        ],
+        [
+          "Hardware block",
+          "Run randomized method-order trials with the same reset rubric. Measure operator time, aborted attempts and contact failures; do not infer broad reliability from a small demo."
+        ],
+        [
+          "Interviews and outreach",
+          "Follow up on appropriate conversations and practice robotics/RL questions. Use preliminary results without presenting them as accepted publications."
+        ],
+        [
+          "Gate 4 review",
+          "Compare active against random, imagined against executed improvement, and adaptation against MPC. Select the smallest set of ablations needed to explain the outcome."
+        ]
+      ],
+      "outputs": [
+        "Held-out generalization results.",
+        "Nested correction-budget curve with error bars.",
+        "A prioritized ablation list tied to specific hypotheses."
+      ],
+      "gate": "The core result is stable enough to explain. If active selection is not better, avoid a sample-efficiency claim; investigate calibration, diversity or incorrect candidate scores.",
+      "explain": "What exactly is held out, and why does your split test the intended generalization?"
+    },
+    {
+      "n": 9,
+      "title": "Run targeted ablations and interrogate failure",
+      "phase": "Evidence",
+      "hours": [
+        8,
+        3,
+        23,
+        8
+      ],
+      "modules": [
+        "uncertainty",
+        "world-models"
+      ],
+      "labs": [
+        "evaluation"
+      ],
+      "papers": [
+        "rise",
+        "reoi"
+      ],
+      "aim": "Understand the mechanism and close the most consequential experimental gaps.",
+      "days": [
+        [
+          "Ablation design",
+          "Prioritize three ablations: planning versus policy updates; frozen versus corrected world model; active versus random trials. Add one only when it answers a concrete remaining question."
+        ],
+        [
+          "Rollout and model error",
+          "Compare short versus longer imagination under the same compute budget. Inspect whether apparent improvement is concentrated where prediction errors are large."
+        ],
+        [
+          "Adaptation and retention",
+          "Measure subsequent encounters and nominal-task retention. Test whether learned changes amortize their training time across repeated blockage scenarios."
+        ],
+        [
+          "Failure audit",
+          "Review raw trajectories, outcome labels and unsafe/aborted attempts. Check whether the method succeeded by exploiting a reward or evaluation loophole."
+        ],
+        [
+          "Research-system interview",
+          "Practice designing the complete deployed loop, including model versioning, timers, reset overhead and rollback. Continue targeted applications and follow-ups."
+        ],
+        [
+          "Gate 5 review",
+          "Prepare the figure list and evidence-backed contribution statement. Recheck closely related papers before deciding what is new."
+        ]
+      ],
+      "outputs": [
+        "Three hypothesis-driven ablations.",
+        "Retention and amortization measurements.",
+        "A draft contribution statement supported by actual evidence."
+      ],
+      "gate": "Every claimed benefit has a corresponding measurement and baseline. Expand to a second task only if the primary study is complete and repeatable.",
+      "explain": "How do you know the improvement came from your correction strategy rather than extra compute or extra data?"
+    },
+    {
+      "n": 10,
+      "title": "Write the story and package a reproducible result",
+      "phase": "Release",
+      "hours": [
+        6,
+        2,
+        24,
+        10
+      ],
+      "modules": [
+        "systems",
+        "uncertainty"
+      ],
+      "labs": [
+        "evaluation"
+      ],
+      "papers": [],
+      "aim": "Turn experiments into a research artifact that can be inspected, rerun and discussed in an interview.",
+      "days": [
+        [
+          "Paper skeleton",
+          "Draft problem, setting, method and experiments. Lead with the concrete failure and the measured outcome. State observation/model assumptions and the hardware scope."
+        ],
+        [
+          "Results and limitations",
+          "Create publication-quality figures from logged results. Write failure cases and negative findings alongside successes. Separate simulated, physical and illustrative figures."
+        ],
+        [
+          "Reproduction recipe",
+          "Run the core pipeline from a clean environment. Record exact revisions, dependencies, commands, checkpoint provenance and expected output formats."
+        ],
+        [
+          "Demo production",
+          "Record a short synchronized imagination-versus-execution video. Include the blockage, base failure, adaptation time, executed recovery and a representative failure."
+        ],
+        [
+          "Interview rehearsal",
+          "Practice the 2-, 10- and 30-minute versions of the project. Solve one ML coding exercise and one robotics system-design question."
+        ],
+        [
+          "External-readiness review",
+          "Have the draft checked for unsupported claims, data leakage and missing baselines. Prepare the repository and technical report for release when ready."
+        ]
+      ],
+      "outputs": [
+        "Complete first technical-report/paper draft.",
+        "Reproduction README and generated figures.",
+        "A short, evidence-labeled demo and interview presentation."
+      ],
+      "gate": "A reviewer can understand exactly what was learned, what was tested and what remains unproven.",
+      "explain": "What is the single strongest result, the strongest alternative explanation, and the biggest limitation?"
+    },
+    {
+      "n": 11,
+      "title": "Close evidence gaps and rehearse deeply",
+      "phase": "Release",
+      "hours": [
+        6,
+        0,
+        24,
+        12
+      ],
+      "modules": [
+        "systems",
+        "planning",
+        "uncertainty"
+      ],
+      "labs": [],
+      "papers": [],
+      "aim": "Finish only experiments needed to substantiate the main claims, while increasing interview intensity.",
+      "days": [
+        [
+          "Review-driven fixes",
+          "Resolve the most important missing comparison or uncertainty issue. Rerun only affected experiments and keep previous results versioned."
+        ],
+        [
+          "Hardware verification",
+          "Repeat critical real trials if necessary. Verify that released videos and figures correspond to documented checkpoints, configurations and data."
+        ],
+        [
+          "Artifact cleanup",
+          "Remove credentials and private records, document data/model licenses, and create a small redistributable sample dataset with provenance."
+        ],
+        [
+          "Mock interviews",
+          "Run one research deep dive and one coding/system-design mock. Write missed questions into a focused review list."
+        ],
+        [
+          "Role-specific preparation",
+          "Adapt the project presentation to robot learning, world models or evaluation roles. Research each team's technical focus before interviews."
+        ],
+        [
+          "Gate 6 review",
+          "Confirm the release checklist, paper claims, rerun instructions and known failures. Choose a realistic submission route based on evidence and verified venue dates."
+        ]
+      ],
+      "outputs": [
+        "Reviewed technical report and reproducible result bundle.",
+        "Role-specific interview presentations.",
+        "A short, prioritized list of remaining limitations and next experiments."
+      ],
+      "gate": "All mandatory release items are complete or explicitly documented as unavailable. A paper submission is conditional on evidence, not on the calendar alone.",
+      "explain": "How would you extend this work in an industry team, and what would you deliberately avoid scaling first?"
+    },
+    {
+      "n": 12,
+      "title": "Release the artifact and complete the interview transition",
+      "phase": "Release",
+      "hours": [
+        4,
+        0,
+        24,
+        14
+      ],
+      "modules": [
+        "systems"
+      ],
+      "labs": [],
+      "papers": [],
+      "aim": "Deliver a complete public research artifact and communicate the work with precision.",
+      "days": [
+        [
+          "Freeze and archive",
+          "Tag a reproducible release, archive evaluation manifests and verify that the repository runs from its documented setup."
+        ],
+        [
+          "Publish the artifact",
+          "Release code/configurations, paired examples and a technical report. Publish a preprint only if authorship, evidence and relevant institutional requirements are resolved."
+        ],
+        [
+          "Communicate results",
+          "Share the final artifact with relevant existing contacts. Keep the claim proportional to the number of tasks, layouts, seeds and physical trials."
+        ],
+        [
+          "Interview practice",
+          "Repeat the weakest coding, RL or robotics topics from mock interviews. Practice concise answers with concrete examples from the project."
+        ],
+        [
+          "Research roadmap",
+          "Write a one-page continuation plan covering richer contact, model fidelity, additional embodiments and efficient policy adaptation."
+        ],
+        [
+          "Retrospective",
+          "Audit what you can derive, implement, explain and reproduce. Update career materials with completed results rather than planned achievements."
+        ]
+      ],
+      "outputs": [
+        "Versioned public code/configuration release and technical report.",
+        "Two-minute demo and 10-minute technical presentation.",
+        "Interview-ready knowledge map and evidence-backed project narrative."
+      ],
+      "gate": "The artifact exists and its claims can be inspected. Use the remaining calendar buffer for integration delays, interviews or a critical rerun—not an unplanned expansion.",
+      "explain": "What did you learn that would change how a deployed robot should use its world model?"
+    }
+  ],
+  "modules": [
+    {
+      "id": "robotics",
+      "title": "Robotics foundations",
+      "weeks": "1–3",
+      "level": "Core",
+      "hours": "14–18",
+      "lab": "geometry",
+      "question": "What connects a policy output to motion of a real end effector?",
+      "topics": [
+        "Reference frames; SE(3), rotation matrices, quaternions, transform composition and camera-to-robot calibration.",
+        "Forward and inverse kinematics; Jacobians, singularities, joint limits and task-space versus joint-space commands.",
+        "Joint position, velocity and torque control; Cartesian impedance; where a learned policy sits above the controller.",
+        "Observations, controller frequency, action duration, latency and synchronization. Review dynamics conceptually rather than spending weeks deriving every manipulator equation."
+      ],
+      "derive": [
+        "Compose camera→base and object→camera transforms to obtain an object pose in the robot frame.",
+        "Derive the planar two-link Jacobian and a damped least-squares IK update.",
+        "Explain why the same Cartesian delta can produce very different joint motion near a singularity."
+      ],
+      "implement": "Write forward kinematics and a Jacobian, verify derivatives numerically, and command an end-effector delta in simulation. Keep units and frame conventions in a single configuration file.",
+      "interview": [
+        "What breaks if an action is interpreted in the wrong frame?",
+        "When would you use impedance rather than position control?",
+        "How do calibration error and action latency appear in robot-learning data?"
+      ],
+      "resources": [
+        "modern",
+        "underactuated",
+        "mujoco"
+      ],
+      "gate": "Explain the complete observation→policy→controller→robot loop and demonstrate a frame transform with a numerical check."
+    },
+    {
+      "id": "rl",
+      "title": "RL essentials and credit assignment",
+      "weeks": "1–2",
+      "level": "Core",
+      "hours": "14–18",
+      "lab": "bellman",
+      "question": "What is actually optimized when a robot learns from experience?",
+      "topics": [
+        "MDPs versus POMDPs; return, discount, occupancy and the difference between state and observation.",
+        "Bellman expectation and optimality; Monte Carlo versus TD; bootstrapping, bias and variance.",
+        "Policy gradients, baselines, advantage estimation and actor–critic methods.",
+        "Exploration, replay, reward design, reward hacking, sparse success signals and termination versus time-limit truncation."
+      ],
+      "derive": [
+        "Write and solve a small Bellman system; check the Bellman residual.",
+        "Derive REINFORCE from the likelihood-ratio identity and show why a state-dependent baseline preserves its expectation.",
+        "Calculate GAE by hand on a short trajectory, distinguishing a terminal state from a truncated rollout."
+      ],
+      "implement": "Solve a tiny blocked gridworld exactly, then add a new wall while keeping the goal fixed. Compare evaluating the old policy with replanning the policy. Use the included Bellman example before a neural implementation.",
+      "interview": [
+        "Why can a policy have high training return yet fail under a small obstruction?",
+        "What is the bias–variance trade-off in TD learning?",
+        "How does partial observability change your agent design?"
+      ],
+      "resources": [
+        "spinning",
+        "pg",
+        "gym"
+      ],
+      "gate": "Derive the Bellman equation and policy gradient unaided; produce a reproducible tabular result."
+    },
+    {
+      "id": "actor-critic",
+      "title": "PPO, SAC and stable optimization",
+      "weeks": "2–4",
+      "level": "Core",
+      "hours": "14–18",
+      "lab": "ppo",
+      "question": "Which policy update is appropriate for continuous robot actions?",
+      "topics": [
+        "PPO: rollout collection, old log-probabilities, clipped objective, value loss, entropy and advantage normalization.",
+        "SAC: twin critics, target networks, replay, entropy temperature and reparameterized tanh-Gaussian actions.",
+        "Why clipping is not a hard trust-region guarantee; why off-policy learning is attractive when robot samples are expensive.",
+        "Exploding values, observation normalization, reward scale, update-to-data ratio and gradient/debugging diagnostics."
+      ],
+      "derive": [
+        "Compute the PPO objective for positive and negative advantages with probability ratios outside the clip interval.",
+        "Write the SAC target with entropy correction and explain the minimum of two critics.",
+        "Derive the tanh log-density correction and explain why you must not backpropagate through target values."
+      ],
+      "implement": "Implement a small PPO update yourself; use CleanRL to inspect a complete trainer. For SAC, reproduce and modify a maintained implementation rather than rebuilding another full trainer. Compare learning curves and failure modes across seeds.",
+      "interview": [
+        "Why does PPO reuse data only for a limited number of epochs?",
+        "Why can an optimistic critic cause failure in imagination?",
+        "Which metrics distinguish a broken environment wrapper from a broken learning update?"
+      ],
+      "resources": [
+        "pg",
+        "sac",
+        "cleanrl",
+        "sb3"
+      ],
+      "gate": "Explain every tensor in a PPO update and a SAC target, including action and batch dimensions."
+    },
+    {
+      "id": "imitation",
+      "title": "Imitation, offline RL and robot data",
+      "weeks": "3–5",
+      "level": "Core",
+      "hours": "10–14",
+      "lab": "bc",
+      "question": "How do demonstrations become a robust starting policy?",
+      "topics": [
+        "Behavior cloning; covariate shift; DAgger and corrective demonstrations.",
+        "Offline RL, out-of-distribution action values, conservatism, and why arbitrary online updates can destroy a good offline policy.",
+        "Episode boundaries, action normalization, camera alignment, observation history and dataset splitting by scene or episode.",
+        "Chunked actions, execution horizons, observation horizons and the control trade-off between smoothness and reactivity."
+      ],
+      "derive": [
+        "Write BC as maximum likelihood and distinguish single-mode regression from multimodal action distributions.",
+        "Explain the source of offline Q-value extrapolation error without memorizing an algorithm name.",
+        "Design a split that prevents neighboring video frames leaking between training and evaluation."
+      ],
+      "implement": "Train a BC baseline on unobstructed simulated task demonstrations. Hold out complete layouts and inspect failure videos. Then measure the distribution shift caused by introducing a blocker. Save normalization statistics with the checkpoint.",
+      "interview": [
+        "Why is low validation action error insufficient?",
+        "When should you collect corrections instead of adding RL?",
+        "How would you audit a robot dataset before training?"
+      ],
+      "resources": [
+        "lerobot",
+        "minari",
+        "robomimic",
+        "fosp"
+      ],
+      "gate": "A BC checkpoint, a dataset card and an untouched layout-based evaluation split."
+    },
+    {
+      "id": "generative",
+      "title": "Generative robot policies and VLAs",
+      "weeks": "4–6",
+      "level": "Core concepts · optional full training",
+      "hours": "8–12",
+      "lab": "diffusion",
+      "question": "What do diffusion, flow matching and a VLA change about the action distribution?",
+      "topics": [
+        "Denoising over action chunks; timestep conditioning; noise schedules and iterative action generation.",
+        "Conditional flow matching; transport from noise to actions; training objective versus inference ODE steps.",
+        "VLA perception-language-action interfaces, proprioception, action representations and embodiment dependence.",
+        "Fine-tuning heads/adapters versus the whole model; compute, data and inference-latency constraints."
+      ],
+      "derive": [
+        "Explain the conditional diffusion noise-prediction loss and its inputs.",
+        "Construct a straight-line conditional flow-matching target between noise and demonstrated actions.",
+        "Compare supervised BC updates with RL updates for a generative policy; do not assume PPO log-probabilities are trivial to obtain."
+      ],
+      "implement": "Train a tiny multimodal action denoiser or flow field on synthetic two-route data. Inspect Diffusion Policy's state example and one openpi data adapter. A full VLA fine-tune is a stretch goal after the main research loop works.",
+      "interview": [
+        "Why can averaging two valid robot trajectories create an invalid one?",
+        "How do action chunks affect reaction to a new blocker?",
+        "Why does adapting a diffusion policy require care with the RL objective?"
+      ],
+      "resources": [
+        "diffusion",
+        "openpi",
+        "dreamzero"
+      ],
+      "gate": "Explain diffusion policy, flow policy and world-action model without conflating their prediction targets."
+    },
+    {
+      "id": "world-models",
+      "title": "Learned world models and imagination",
+      "weeks": "3–6",
+      "level": "Research core",
+      "hours": "16–20",
+      "lab": "dynamics",
+      "question": "What must a model predict for imagined training to improve physical behavior?",
+      "topics": [
+        "Action-conditioned transition models; state, image and latent predictions; recurrent belief states under partial observation.",
+        "RSSM-style posterior versus prior, reconstruction and predictive losses, reward and continuation heads.",
+        "Dreamer-style actor learning in imagined rollouts versus DINO-WM-style planning with learned visual features.",
+        "Compounding error, exposure bias, rollout horizon, model exploitation and the difference between a realistic video and useful dynamics."
+      ],
+      "derive": [
+        "Write p(z[t+1] | z[t], a[t]) and an observation-conditioned posterior, explaining what is available at deployment.",
+        "Explain the components of a latent world-model loss and what each can fail to preserve.",
+        "Draw the computational graph for a frozen world model and a trainable actor; specify whether learning uses differentiable rollouts or a synthetic-transition replay buffer."
+      ],
+      "implement": "Fit a small ensemble to blocked and unblocked transitions. Evaluate multi-step errors and success/failure discrimination, not just one-step loss. Add a frozen visual encoder only after the state-based diagnostic is working; make clear which result uses which observations.",
+      "interview": [
+        "Why can a model reconstruct an obstacle yet predict motion through it?",
+        "When do you update the model, its current latent state, or the policy?",
+        "Why might longer imagination improve reward and worsen physical success?"
+      ],
+      "resources": [
+        "dreamer",
+        "dinowm",
+        "daydreamer",
+        "reoi",
+        "rise"
+      ],
+      "gate": "Replay a matched real/simulator transition and its imagined counterpart; explain a failure at contact or blockage."
+    },
+    {
+      "id": "planning",
+      "title": "Planning, control and policy adaptation",
+      "weeks": "3–7",
+      "level": "Research core",
+      "hours": "10–14",
+      "lab": "mpc",
+      "question": "When is searching for a new action sequence enough, and when is learning worthwhile?",
+      "topics": [
+        "Receding-horizon control; CEM, random shooting and MPPI at a conceptual level.",
+        "Configuration-space obstacles, RRT intuition, contact modes, non-prehensile manipulation and geometric feasibility.",
+        "Task/skill sequencing versus continuous action optimization; symbolic versus neural world models.",
+        "Transient replanning versus persistent policy updates; retention, transfer, compute amortization and total recovery latency."
+      ],
+      "derive": [
+        "Write an MPC objective with goal progress, control cost and constraint costs, and identify the horizon and terminal term.",
+        "Derive CEM's elite mean/variance update and explain the warm start.",
+        "Explain a case in which moving away from the goal is necessary to eventually reach it."
+      ],
+      "implement": "Build CEM-MPC on the same learned dynamics used by the adaptation agent. Keep model calls, horizon, initial observations and wall-clock budget visible. Add an exact-physics oracle only as a diagnostic upper bound.",
+      "interview": [
+        "What would persuade you that policy fine-tuning adds value over replanning?",
+        "How do you distinguish a missing skill from a poorly chosen skill sequence?",
+        "Why are local trajectory optimizers vulnerable to blocked paths?"
+      ],
+      "resources": [
+        "underactuated",
+        "tdmpc",
+        "replan",
+        "namo"
+      ],
+      "gate": "A running planner baseline and a fair comparison protocol for training in imagination."
+    },
+    {
+      "id": "uncertainty",
+      "title": "Uncertainty, active correction and evaluation",
+      "weeks": "5–10",
+      "level": "Research core",
+      "hours": "12–16",
+      "lab": "acquisition",
+      "question": "Which few physical trials most improve the next recovery?",
+      "topics": [
+        "Epistemic versus aleatoric uncertainty; ensembles; disagreement versus calibrated uncertainty.",
+        "Active learning under policy-induced distribution shift; uncertainty sampling versus expected decision improvement.",
+        "Model optimism, failure discrimination, Brier score, success reliability and predicted-versus-observed outcomes.",
+        "Paired comparisons, bootstrap intervals, layout-level independence, seed variation, cost accounting and negative results."
+      ],
+      "derive": [
+        "Define predicted-minus-observed success gap without assuming the cause is intentional self-deception.",
+        "Write one simple acquisition score using predicted success and ensemble disagreement; specify candidate-generation and normalization.",
+        "Derive a Bernoulli standard error and explain why many trials from one layout are not many independent tasks."
+      ],
+      "implement": "Compare active selection with random selection from the same candidate pool and the same real-trial budget. Fit score weights on development data only. Keep the final evaluation set inaccessible to trial selection and stopping decisions.",
+      "interview": [
+        "Can all ensemble members confidently share the same error?",
+        "What does active selection optimize, and what would falsify its benefit?",
+        "Why can a lower optimism gap coexist with a worse success rate?"
+      ],
+      "resources": [
+        "fail2progress",
+        "reoi",
+        "fosp",
+        "worldcloner"
+      ],
+      "gate": "One reproducible budget curve with uncertainty, separate data splits and a complete robot/compute cost ledger."
+    },
+    {
+      "id": "systems",
+      "title": "Research engineering and deployment",
+      "weeks": "1–12",
+      "level": "Continuous practice",
+      "hours": "Integrated",
+      "lab": "logging",
+      "question": "Can someone else rerun, debug and trust your experiment?",
+      "topics": [
+        "PyTorch shapes, autograd boundaries, checkpointing, evaluation mode, vectorized environments and reproducible random generators.",
+        "Dataset manifests, immutable split IDs, versioned configs, model hashes and replay-buffer provenance.",
+        "Training throughput, GPU memory, inference latency, parallel rollout generation and stale observations.",
+        "Robot interfaces, observation/action contracts, episode logging, reset time, command limits and recovery rollback."
+      ],
+      "derive": [
+        "Trace batch×time×feature dimensions through model training, imagined rollout and policy execution.",
+        "Identify every source of randomness and every timer in one adaptation episode.",
+        "Explain how you would diagnose good synthetic returns but poor hardware results."
+      ],
+      "implement": "Use configuration-driven runs, save artifact manifests, and replay an episode with timestamp and action-unit checks. Log every real trial, including aborted trials, calibration and resets. Build a minimal dataset reader before expanding collection.",
+      "interview": [
+        "How do you profile a slow imagination-training loop?",
+        "What belongs in a checkpoint besides network weights?",
+        "How would you reproduce a failure that only occurs on the physical arm?"
+      ],
+      "resources": [
+        "cleanrl",
+        "lerobot",
+        "mujoco"
+      ],
+      "gate": "A clean-machine setup recipe and an experiment bundle that includes configuration, seeds, code revision and outcome labels."
+    }
+  ],
+  "labs": [
+    {
+      "id": "bellman",
+      "number": "01",
+      "title": "A blocked gridworld and Bellman backups",
+      "week": "1",
+      "hours": 5,
+      "mode": "Implement",
+      "module": "rl",
+      "file": "bellman_grid.py",
+      "resources": [
+        "spinning",
+        "gym"
+      ],
+      "brief": "Make the obstruction precise before adding neural networks. Keep the start and goal fixed; change only a wall or passage.",
+      "steps": [
+        "Implement deterministic transitions and value iteration with an explicit terminal state.",
+        "Evaluate the original policy after adding the wall. Then recompute the policy using the updated dynamics.",
+        "Plot or print the original path, blocked attempt and revised path; inspect Bellman residuals.",
+        "Explain why this experiment demonstrates replanning rather than learning a missing skill."
+      ],
+      "checks": [
+        "All transition rows sum to one; the terminal value stays zero.",
+        "The added wall invalidates the original route while a longer valid route remains.",
+        "Rerunning with the same input produces the same path and values."
+      ],
+      "output": "A tiny reproducible obstruction example and a short explanation of policy evaluation versus policy improvement.",
+      "stretch": "Replace the detour with a movable blocker and add a push action. Analyze the change in state and action spaces."
+    },
+    {
+      "id": "geometry",
+      "number": "02",
+      "title": "Frames, kinematics and an IK controller",
+      "week": "1",
+      "hours": 5,
+      "mode": "Implement",
+      "module": "robotics",
+      "file": "kinematics.py",
+      "resources": [
+        "modern",
+        "mujoco"
+      ],
+      "brief": "Build enough geometric intuition to debug a robot policy's actions instead of treating the controller as a black box.",
+      "steps": [
+        "Implement planar two-link forward kinematics and the analytical Jacobian.",
+        "Check the Jacobian against finite differences and run damped least-squares IK.",
+        "Compose two homogeneous transforms and verify inverse/composition identities.",
+        "Repeat the end-effector reaching example in the chosen simulator and document action units and frames."
+      ],
+      "checks": [
+        "Jacobian error is below a declared numerical tolerance at nonsingular configurations.",
+        "IK converges on reachable targets and reports failure for an unreachable target.",
+        "A positive command moves the end effector in the documented frame."
+      ],
+      "output": "A geometry notebook, numerical checks and a diagram of camera, base, tool and object frames.",
+      "stretch": "Compare joint-space and Cartesian commands near a singularity."
+    },
+    {
+      "id": "ppo",
+      "number": "03",
+      "title": "Policy gradients, GAE and a PPO update",
+      "week": "2",
+      "hours": 8,
+      "mode": "Implement + inspect",
+      "module": "actor-critic",
+      "file": "ppo_update.py",
+      "resources": [
+        "pg",
+        "cleanrl",
+        "gym"
+      ],
+      "brief": "Own the update equations; reuse the surrounding training infrastructure.",
+      "steps": [
+        "Implement discounted returns and GAE on hand-written trajectories.",
+        "Implement clipped policy loss, value loss, entropy and approximate KL with explicit old log-probabilities.",
+        "Read CleanRL's PPO file end to end; run one small Gymnasium task and log seeds/configs.",
+        "Make one controlled intervention: remove advantage normalization or change the clipping coefficient and explain the effect."
+      ],
+      "checks": [
+        "Hand-computed advantages match code, including time-limit bootstrapping.",
+        "No gradient reaches the stored old policy log-probabilities or targets.",
+        "At least three seeds produce learning curves; a single lucky run is not a claim of convergence."
+      ],
+      "output": "A small original PPO update and an annotated reproducibility report, not a second general-purpose RL library.",
+      "stretch": "Run continuous-action PPO and inspect action scaling; skip if the week's timebox is exhausted."
+    },
+    {
+      "id": "sac",
+      "number": "04",
+      "title": "SAC, replay and continuous actions",
+      "week": "2–3",
+      "hours": 6,
+      "mode": "Reproduce + modify",
+      "module": "actor-critic",
+      "file": null,
+      "resources": [
+        "sac",
+        "cleanrl",
+        "sb3"
+      ],
+      "brief": "Use a reference SAC implementation as the continuous-control workhorse for later residual policy adaptation.",
+      "steps": [
+        "Trace the actor, two critics, target critics, replay sampling and entropy-temperature update.",
+        "Run a small continuous-control benchmark using the repository's documented environment.",
+        "Inspect the tanh-Gaussian log-probability and action rescaling. Write one numerical comparison.",
+        "Save/reload the actor and normalization state and evaluate on fixed initial states."
+      ],
+      "checks": [
+        "Target values are detached; replay data and imagined data have explicit provenance.",
+        "Train/evaluation action conventions match.",
+        "You can explain the minimum-Q target and diagnose value explosion."
+      ],
+      "output": "A pinned configuration and baseline run with an annotated SAC dataflow diagram.",
+      "stretch": "Test a small residual actor on top of a fixed base controller."
+    },
+    {
+      "id": "logging",
+      "number": "05",
+      "title": "Robot interface and episode recorder",
+      "week": "1–3",
+      "hours": 6,
+      "mode": "Build for project",
+      "module": "systems",
+      "file": null,
+      "resources": [
+        "lerobot",
+        "mujoco"
+      ],
+      "brief": "Create the shared interface every baseline will use. Finish a simulator episode before extensive collection.",
+      "steps": [
+        "Define observe(), act(), reset() and step() with frame, units, timestamps and frequency documented.",
+        "Record observations, executed actions, raw policy outputs, rewards, termination, collision/contact events and scene IDs.",
+        "Save an episode manifest including calibration/configuration/checkpoint hashes and source = real, simulator or imagined.",
+        "Replay the log offline; identify dropped frames, timestamp inversions and action saturation."
+      ],
+      "checks": [
+        "A second reader can load and visualize an episode without launching the robot.",
+        "Commanded and executed actions are distinguished.",
+        "All aborted attempts remain in the cost ledger; none silently disappear from outcome statistics."
+      ],
+      "output": "One interface, one validated episode schema and an inspection video.",
+      "stretch": "Export a verified subset to the LeRobot dataset format; do not delay the pilot for format conversion."
+    },
+    {
+      "id": "bc",
+      "number": "06",
+      "title": "Behavior cloning and distribution shift",
+      "week": "3",
+      "hours": 6,
+      "mode": "Implement",
+      "module": "imitation",
+      "file": null,
+      "resources": [
+        "lerobot",
+        "robomimic",
+        "minari"
+      ],
+      "brief": "Establish what the policy can already do before you claim it improves in imagination.",
+      "steps": [
+        "Collect or generate 50–100 simple demonstration trajectories in simulation; choose hardware counts only after timing resets.",
+        "Train a small MLP BC policy on state observations, or a frozen visual encoder plus policy head.",
+        "Split by layout/episode and evaluate closed-loop completion, not frame-level action error alone.",
+        "Introduce held-out blocker placements and classify failures into perception, planning, contact/control and missing-skill cases."
+      ],
+      "checks": [
+        "No held-out layout is used to choose checkpoints or acquisition weights.",
+        "Normalization uses the training split only.",
+        "The baseline succeeds on the nominal task often enough to make recovery meaningful."
+      ],
+      "output": "A BC checkpoint, dataset card and nominal-versus-obstructed evaluation grid.",
+      "stretch": "Add corrective demonstrations and compare them with the same number of ordinary demonstrations."
+    },
+    {
+      "id": "diffusion",
+      "number": "07",
+      "title": "A multimodal action generator",
+      "week": "4",
+      "hours": 5,
+      "mode": "Miniature implementation",
+      "module": "generative",
+      "file": null,
+      "resources": [
+        "diffusion",
+        "openpi"
+      ],
+      "brief": "Connect your generative-modeling background to robot action distributions without spending the month training a foundation model.",
+      "steps": [
+        "Create a synthetic dataset with two valid routes around an obstacle.",
+        "Train a conditional denoiser or a tiny flow-matching vector field over action chunks.",
+        "Compare samples against an MSE regressor whose mean may cross the obstacle.",
+        "Inspect one real Diffusion Policy state example and one openpi observation/action adapter."
+      ],
+      "checks": [
+        "Plot sampled trajectories and collision rates; visual quality alone is insufficient.",
+        "Explain the training objective and sampling loop unaided.",
+        "Separate observation horizon, prediction horizon and executed action prefix."
+      ],
+      "output": "A small action-distribution figure and a two-minute explanation suitable for an interview.",
+      "stretch": "Train the repository's PushT policy only if the research baseline is already running."
+    },
+    {
+      "id": "dynamics",
+      "number": "08",
+      "title": "An action-conditioned dynamics ensemble",
+      "week": "3–4",
+      "hours": 8,
+      "mode": "Implement",
+      "module": "world-models",
+      "file": null,
+      "resources": [
+        "dreamer",
+        "dinowm",
+        "reoi"
+      ],
+      "brief": "Start with a transparent learned dynamics model; expose its failure at the new obstruction.",
+      "steps": [
+        "Fit three small models to delta-state transitions, with bootstrapped episode-level datasets.",
+        "Train and evaluate on nominal and blocked transitions; preserve the training/development/test split.",
+        "Compare one-step error with 5/10/20-step rollout errors and failure/success discrimination.",
+        "Add a frozen visual encoder and latent dynamics if the sensor pathway and compute permit. Record this as a separate observation setting."
+      ],
+      "checks": [
+        "An action permutation or zero-action intervention changes predictions appropriately.",
+        "The model retains the blocker and distinguishes collisions from progress on development cases.",
+        "All ensemble members are independently initialized; disagreement is not claimed to be a calibrated confidence interval."
+      ],
+      "output": "Paired predicted/executed trajectories, multi-step error curves and a documented model limitation.",
+      "stretch": "Reproduce a small Dreamer/DINO-WM run; full recurrent visual modeling is optional until the core loop works."
+    },
+    {
+      "id": "mpc",
+      "number": "09",
+      "title": "CEM-MPC as the essential baseline",
+      "week": "4–5",
+      "hours": 6,
+      "mode": "Implement",
+      "module": "planning",
+      "file": "cem_planner.py",
+      "resources": [
+        "underactuated",
+        "tdmpc",
+        "dinowm"
+      ],
+      "brief": "Test whether the current learned model can solve the obstruction through search before adding policy updates.",
+      "steps": [
+        "Sample bounded action sequences and score them with the learned dynamics and the same task objective used by adaptation.",
+        "Refit elite action mean/variance, execute only the first action or chunk, and reobserve.",
+        "Warm-start from the remaining previous plan; log model calls and wall-clock latency.",
+        "Compare with random shooting and exact-physics planning as a diagnostic. Label the included 2-D point example as a teaching demo, not a robot benchmark."
+      ],
+      "checks": [
+        "No future true state leaks into the learned-model planner.",
+        "Planner and adaptation agent receive the same current observations and comparable compute budgets.",
+        "Costs, horizon and action limits are saved in the run configuration."
+      ],
+      "output": "A planner baseline and a plot of success versus planning compute.",
+      "stretch": "Add a tree-search baseline only if CEM is demonstrably limited by long-horizon search."
+    },
+    {
+      "id": "imagination",
+      "number": "10",
+      "title": "Actual policy fine-tuning inside the model",
+      "week": "5–6",
+      "hours": 8,
+      "mode": "Build research loop",
+      "module": "world-models",
+      "file": null,
+      "resources": [
+        "daydreamer",
+        "rise",
+        "fosp"
+      ],
+      "brief": "Demonstrate parameter updates that persist after returning to execution; do not relabel action-sequence search as fine-tuning.",
+      "steps": [
+        "Snapshot the base actor and start each adaptation comparison from the same checkpoint.",
+        "Infer the current model state from recent observations. Generate short imagined rollouts from real/development anchor states.",
+        "Freeze dynamics within an adaptation round. Fine-tune a residual actor using synthetic transitions and a documented SAC-style update; retain a mix of original replay for retention.",
+        "Evaluate in the actual simulator or robot, then compare predicted improvement with executed improvement. Enforce an update/time budget and keep rollback available."
+      ],
+      "checks": [
+        "Actor weights change; world-model parameters remain fixed within the round.",
+        "Real samples, synthetic samples and reused samples have separate counters.",
+        "Report recovery on both the current blockage and untouched retention tasks."
+      ],
+      "output": "The first dream→update→execute experiment, including one complete failure analysis.",
+      "stretch": "Substitute a generative policy adapter only after the compact continuous actor is validated."
+    },
+    {
+      "id": "acquisition",
+      "number": "11",
+      "title": "Choose the next few physical trials",
+      "week": "6–8",
+      "hours": 6,
+      "mode": "Implement",
+      "module": "uncertainty",
+      "file": "metrics_and_selection.py",
+      "resources": [
+        "fail2progress",
+        "reoi"
+      ],
+      "brief": "Turn the earlier honesty project into a concrete, budget-matched correction experiment.",
+      "steps": [
+        "Generate a fixed candidate pool from the current policy and legal development layouts.",
+        "Define a transparent score: predicted success multiplied by outcome disagreement; use a diversity filter so top selections are not duplicates.",
+        "Compare with uniform random selection from the same pool. Count selection compute and aborted real attempts.",
+        "Add real transitions, update the world model between rounds, then repeat policy adaptation. Keep score weights fixed before final evaluation."
+      ],
+      "checks": [
+        "Selection never reads actual candidate outcomes before choosing.",
+        "Active and random conditions start from the same base data and use the same real-trial allowance.",
+        "Do not use held-out test layouts to tune the acquisition score or stop training."
+      ],
+      "output": "A candidate-ranking example and a nested correction-budget curve.",
+      "stretch": "Compare uncertainty-only and policy-rollout refresh after the primary active-versus-random comparison is complete."
+    },
+    {
+      "id": "evaluation",
+      "number": "12",
+      "title": "An honest evaluation report",
+      "week": "8–12",
+      "hours": 6,
+      "mode": "Build research analysis",
+      "module": "uncertainty",
+      "file": "metrics_and_selection.py",
+      "resources": [
+        "fail2progress",
+        "reoi"
+      ],
+      "brief": "Produce conclusions that survive a skeptical research interview.",
+      "steps": [
+        "Aggregate by held-out layout and training seed; retain raw outcomes.",
+        "Plot real success versus correction trials, recovery latency and total model calls.",
+        "Report model optimism, success/failure discrimination and nominal-task retention together.",
+        "Use layout-level paired bootstrap intervals for method differences. Declare small hardware evaluations preliminary rather than inferring significance from a few episodes."
+      ],
+      "checks": [
+        "All methods use the same success rubric, reset procedure and evaluation layouts.",
+        "Hyperparameter tuning and checkpoint selection use development data only.",
+        "A clean rerun recreates the figures from logged data; example numbers are never presented as experimental results."
+      ],
+      "output": "A reproducible results bundle with ablations, uncertainty and negative cases.",
+      "stretch": "Package the paired imagined/real dataset and a model/data card for release."
+    }
+  ],
+  "resources": {
+    "spinning": [
+      "Spinning Up · core RL concepts",
+      "https://spinningup.openai.com/en/latest/spinningup/rl_intro.html"
+    ],
+    "pg": [
+      "Spinning Up · policy gradients",
+      "https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html"
+    ],
+    "sac": [
+      "Spinning Up · SAC",
+      "https://spinningup.openai.com/en/latest/algorithms/sac.html"
+    ],
+    "cleanrl": [
+      "CleanRL · single-file implementations",
+      "https://github.com/vwxyzjn/cleanrl"
+    ],
+    "sb3": [
+      "Stable-Baselines3",
+      "https://github.com/DLR-RM/stable-baselines3"
+    ],
+    "gym": [
+      "Gymnasium",
+      "https://gymnasium.farama.org/"
+    ],
+    "modern": [
+      "Modern Robotics · Lynch & Park",
+      "https://modernrobotics.northwestern.edu/nu-gm-book-resource/"
+    ],
+    "underactuated": [
+      "Underactuated Robotics · Tedrake",
+      "https://underactuated.mit.edu/"
+    ],
+    "mujoco": [
+      "MuJoCo documentation",
+      "https://mujoco.readthedocs.io/en/stable/overview.html"
+    ],
+    "minari": [
+      "Minari · offline datasets",
+      "https://github.com/Farama-Foundation/Minari"
+    ],
+    "lerobot": [
+      "LeRobot",
+      "https://github.com/huggingface/lerobot"
+    ],
+    "robomimic": [
+      "robomimic",
+      "https://github.com/ARISE-Initiative/robomimic"
+    ],
+    "diffusion": [
+      "Diffusion Policy · reference implementation",
+      "https://github.com/real-stanford/diffusion_policy"
+    ],
+    "openpi": [
+      "openpi · VLA models",
+      "https://github.com/Physical-Intelligence/openpi"
+    ],
+    "dreamer": [
+      "DreamerV3 · reference repository",
+      "https://github.com/danijar/dreamerv3"
+    ],
+    "dinowm": [
+      "DINO-WM · visual predictive models",
+      "https://github.com/gaoyuezhou/dino_wm"
+    ],
+    "tdmpc": [
+      "TD-MPC2",
+      "https://github.com/nicklashansen/tdmpc2"
+    ],
+    "dreamzero": [
+      "DreamZero · world-action model",
+      "https://github.com/dreamzero0/dreamzero"
+    ],
+    "fosp": [
+      "FOSP · paper and robot adaptation",
+      "https://arxiv.org/abs/2407.04942"
+    ],
+    "rise": [
+      "RISE · imagination-based policy improvement",
+      "https://arxiv.org/html/2602.11075v1"
+    ],
+    "reoi": [
+      "Reimagination · obstacle-related prediction failures",
+      "https://arxiv.org/pdf/2506.16565"
+    ],
+    "resync": [
+      "ReSYNC · recovery skills and planning concepts",
+      "https://arxiv.org/html/2606.18328v1"
+    ],
+    "fail2progress": [
+      "Fail2Progress · targeted model correction",
+      "https://arxiv.org/html/2509.01746v1"
+    ],
+    "replan": [
+      "RePLan · obstruction-driven replanning",
+      "https://arxiv.org/html/2401.04157v2"
+    ],
+    "daydreamer": [
+      "DayDreamer · physical robot learning",
+      "https://proceedings.mlr.press/v205/wu23c.html"
+    ],
+    "worldcloner": [
+      "WorldCloner · adaptation to novelty",
+      "https://arxiv.org/abs/2301.06294"
+    ],
+    "cbwm": [
+      "Concept Bottleneck World Models · dissertation",
+      "https://arxiv.org/html/2505.10330v1"
+    ],
+    "namo": [
+      "NAMO · learned dynamic constraints",
+      "https://faculty.cc.gatech.edu/~isbell/papers/iros2016.pdf"
+    ],
+    "nie": [
+      "Pushing It Out of the Way",
+      "https://arxiv.org/pdf/2104.14040"
+    ]
+  },
+  "outreach_week": 7,
+  "weekly_hours": 42
+}
