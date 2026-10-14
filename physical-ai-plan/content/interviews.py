@@ -20,7 +20,7 @@ QUESTIONS = [
  ("World models", "How can the policy exploit its simulator?", "Describe unsupported actions, optimistic rewards or impossible contact transitions. Explain why shared weights are not necessary for exploitation and why ensemble agreement is not proof of correctness."),
  ("World models", "Would you use longer imagined rollouts?", "Discuss reachable-state coverage, contact error, value bootstrapping and compute. Propose a measured horizon ablation with executed outcomes."),
  ("Research", "Why fine-tune instead of replanning?", "Name the same-model MPC baseline. Explain when persistent behavior changes and transfer across repeated encounters could amortize training cost. Accept that a detour may only need planning."),
- ("Research", "What exactly is new relative to RISE, FOSP and Fail2Progress?", "State the verified overlap first. Isolate event-triggered obstruction adaptation, a fixed physical verification budget and active selection. Novelty remains a literature-backed claim, not an assumption."),
+ ("Research", "What exactly is new relative to RISE, FOSP, Fail2Progress and verification-based WAM improvement?", "State the verified overlap first, including Cosmos Policy and recent work such as EVO-WAM. Compare update timing, imagined experience selection, physical verification, data budget and planning baselines. Novelty remains a literature-backed claim, not an assumption."),
  ("Research", "How do you choose the next physical trial?", "Specify the candidate pool, score computed before execution, diversity, budget and random baseline. Explain a concrete failure of uncertainty sampling."),
  ("Research", "How do you know the model became more honest?", "Use optimism gap together with Brier score/discrimination and executed success. Explain why predicting failure for everything is not useful improvement."),
  ("Research", "How do you prevent evaluation leakage?", "Separate training, development/acquisition, final layouts and retention. Explain where thresholds, checkpoints and stopping rules were selected."),
@@ -29,6 +29,10 @@ QUESTIONS = [
  ("Systems", "How would you profile the training loop?", "Separate predictor calls, encoding, data transfer, rollout generation, updates, synchronization and checkpoint overhead. Report throughput and peak memory with the actual device."),
  ("Systems", "How do you reproduce a rare physical failure?", "Preserve the complete scene, calibration, seeds, model/policy hashes, raw observations and commanded/executed actions. Explain remaining nondeterminism."),
  ("Career", "Why move from academia into Physical AI?", "Connect existing modeling, uncertainty and research leadership strengths to specific deployed robot-learning problems. Use the artifact as evidence of new robotics/RL execution ability."),
+ ("World models", "Trace the lineage from Dyna to modern world-action models.", "Distinguish tabular model backups, compressed learned simulation, PETS/PlaNet planning, Dreamer actor learning, MBPO short synthetic replay, and pretrained video/action modeling. Explain which ideas your project actually implements."),
+ ("Policies", "How do original OpenVLA, OpenVLA-OFT and π₀ differ?", "Compare pretrained backbones, observations, original discrete action tokens, continuous chunked decoding and flow-based action generation. Explain dataset-specific normalization, LoRA versus full updates, inference latency and the exact checkpoint you inspected or ran."),
+ ("World models", "How would you use Cosmos in this robot adaptation project?", "Identify exact Cosmos version/checkpoint and whether it provides reasoning, video generation, action-conditioned forward dynamics or robot actions. Compare Cosmos Policy and DreamZero. Specify data/embodiment compatibility, throughput, policy update objective and independent executed evaluation."),
+ ("World models", "What distinguishes DINO-WM and V-JEPA 2-AC from a generic video model?", "Explain feature prediction versus pixel generation, representation pretraining versus action-conditioned robot post-training, and online planning versus persistent policy updates. Name information that a useful feature representation can still lose at contact."),
 ]
 
 CAREER_PHASES = [
@@ -41,6 +45,7 @@ CAREER_PHASES = [
 ]
 
 CODING_PRACTICE = [
+ ("Transformer and adaptation mechanics", "Write scaled dot-product attention with a temporal mask and a low-rank linear update W + BA. Check shapes and trainable-parameter counts. Use this only where prerequisites are weak, replacing lower-priority review within theory hours."),
  ("Tensor and data handling", "Implement an episode-aware sequence sampler, padded masks and train-only normalization. Debug a batch×time×feature shape mismatch."),
  ("RL mechanics", "Write a replay buffer, n-step/GAE targets, Polyak updates and a squashed-Gaussian log-probability. Explain tests for each."),
  ("Geometry and planning", "Compose/invert poses, implement a two-link Jacobian and write CEM elite updates. Discuss unreachable goals and numerical stability."),

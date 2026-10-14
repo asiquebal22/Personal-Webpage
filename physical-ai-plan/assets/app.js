@@ -92,13 +92,27 @@
     document.querySelectorAll('[data-filter]').forEach(el=>{const selected=el===button;el.classList.toggle('active',selected);el.setAttribute('aria-pressed',String(selected));});
     document.querySelectorAll('[data-category]').forEach(el=>el.classList.toggle('hidden',button.dataset.filter!=='All'&&el.dataset.category!==button.dataset.filter));
   }));
+  function revealLinkedPaper() {
+    let id;
+    try { id=decodeURIComponent(window.location.hash.slice(1)); } catch { return; }
+    const paper=document.getElementById(id);
+    if(!paper || paper.tagName!=='DETAILS') return;
+    if(paper.classList.contains('hidden')) {
+      document.querySelectorAll('[data-category]').forEach(el=>el.classList.remove('hidden'));
+      document.querySelectorAll('[data-filter]').forEach(el=>{const selected=el.dataset.filter==='All';el.classList.toggle('active',selected);el.setAttribute('aria-pressed',String(selected));});
+    }
+    paper.open=true;
+    paper.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('hashchange',revealLinkedPaper);
+  revealLinkedPaper();
   const dialog=document.querySelector('#searchDialog'), query=document.querySelector('#searchQuery'), results=document.querySelector('#searchResults');
   function renderSearch() {
     const terms=query.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
     const matches=(window.PLAN_SEARCH||[]).filter(x=>terms.every(t=>(x.title+' '+x.text+' '+x.kind).toLowerCase().includes(t))).slice(0,18);
     results.replaceChildren();
     if(!matches.length){const p=document.createElement('p');p.className='search-empty';p.textContent='No matches. Try PPO, obstruction, world model or evaluation.';results.append(p);return;}
-    matches.forEach(item=>{const a=document.createElement('a');a.href=item.href;a.className='search-result';const k=document.createElement('span');k.textContent=item.kind;const t=document.createElement('strong');t.textContent=item.title;const p=document.createElement('p');p.textContent=item.text.slice(0,165);a.append(k,t,p);results.append(a);});
+    matches.forEach(item=>{const a=document.createElement('a');a.href=item.href;a.className='search-result';a.addEventListener('click',()=>dialog.close());const k=document.createElement('span');k.textContent=item.kind;const t=document.createElement('strong');t.textContent=item.title;const p=document.createElement('p');p.textContent=item.text.slice(0,165);a.append(k,t,p);results.append(a);});
   }
   function openSearch(){dialog.showModal();renderSearch();query.focus();}
   document.querySelectorAll('[data-search]').forEach(el=>el.addEventListener('click',openSearch));

@@ -22,13 +22,24 @@ it is not synchronized to GitHub or another device.
 - Nine theory modules with derivations, implementation connections and mastery checks.
 - Twelve implementation labs with verification criteria and five runnable teaching scripts.
 - Detailed research task, architecture, learning loop, baselines, splits, budgets and metrics.
-- Reading notes with world-model classifications and evidence boundaries.
+- A foundational-paper curriculum with twelve core deep reads, scheduled surveys,
+  primary paper links, study prompts and a reference shelf.
+- A model landscape covering Cosmos/Cosmos Policy, OpenVLA/OFT, openpi, DreamZero,
+  V-JEPA, DINO-WM and the historical model-based RL and robot-policy lineages.
+- Two bounded foundation-model practice blocks inside the existing research budget.
+- Closest-project reading notes with model classifications and evidence boundaries.
 - Interview questions, coding exercises and career preparation beginning privately.
 - A resource library linking primary documentation and author repositories.
 
 The site is a proposed plan, not evidence of completed experiments. The teaching
 scripts and synthetic examples are labeled accordingly. A paper submission and
 strong novelty claim depend on actual results and a fresh literature comparison.
+
+Reading time is included in each week's theory allocation. The two model-practice
+blocks use 12 existing research hours across Weeks 5–7 (4/6/2 hours), replacing
+optional exploration. They do not expand the 504-hour core schedule. Checkpoint
+inference and fine-tuning depend on compatible data and compute; the site separates
+an audit, a run and a validated closed-loop result.
 
 ## Edit and regenerate
 

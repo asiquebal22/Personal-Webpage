@@ -1,5 +1,7 @@
 """Twelve 42-hour weeks. Hours are disjoint: theory, labs, project, interview."""
 
+from literature import READING_SCHEDULE
+
 WEEKS = [
  dict(n=1, title="Establish the foundations and the experiment contract", phase="Foundations", hours=[18,10,10,4], modules=["rl","robotics","systems"], labs=["bellman","geometry","logging"], papers=["daydreamer"],
       aim="Understand the robot-learning loop and start the research infrastructure immediately. Diagnose knowledge gaps instead of redoing material already mastered.",
@@ -7,7 +9,7 @@ WEEKS = [
             ("Bellman and blockage", "Implement the blocked-gridworld example. Evaluate a frozen policy before and after a wall change, then replan. Write what changed: environment state, dynamics, policy or action sequence."),
             ("Geometry and commands", "Implement planar FK/Jacobian checks. Review frame composition and calibration. Inspect the physical arm interface or simulator and record action units, joint limits and control frequency."),
             ("Policy gradients", "Derive REINFORCE and a baseline. Work through a hand-computed trajectory. Install only the small educational stack in an isolated environment; identify GPU requirements for the research stack."),
-            ("Task and recorder", "Create/reset the simulated scene. Record a scripted policy episode and outcome. Read DayDreamer's problem/method/experiments and sketch how policy learning differs from MPC."),
+            ("Task and recorder", "Create/reset the simulated scene. Record a scripted policy episode and outcome. Use the assigned Dyna and World Models readings to sketch interaction, model fitting, planning and policy learning."),
             ("Integrate and explain", "Replay an episode, export an initial manifest, and record a five-minute explanation of the full observation→policy→controller loop. Review the week's assumptions and unresolved hardware access issues.")],
       outputs=["One-page research question and nominal/blocked task specification.","Working tabular obstruction demo and geometry checks.","One logged simulator episode and a reproducibility manifest."],
       gate="A scripted controller can complete one nominal episode and produce replayable data. If hardware is unavailable, continue in simulation while arranging access; do not postpone the model-learning pilot.",
@@ -18,7 +20,7 @@ WEEKS = [
             ("A complete RL run", "Run a small reference PPO experiment and save all hyperparameters. Inspect losses, entropy, approximate KL and gradient norms. Fix wrapper issues before tuning learning rates."),
             ("SAC and replay", "Derive the soft Q target and inspect a reference SAC trainer. Run a continuous-control smoke experiment. Explain replay reuse, target networks and tanh action scaling."),
             ("Robot data pathway", "Finish observation/action logging and the reset procedure. Acquire a few nominal and obstructed diagnostic rollouts. Confirm both success and failure labels are observable."),
-            ("Read the closest adaptation baseline", "Read FOSP's method, real-robot section and limitations. Distinguish learning from real interaction plus imagination from an imagined-only adaptation claim."),
+            ("Read the optimization foundations", "Read the original PPO and SAC objectives and connect them to your implementation. Survey DAgger for the distribution-shift problem; keep the project-specific adaptation papers for their assigned later weeks."),
             ("Gate 1 review", "Demonstrate reset→observe→act→record→replay in the actual task. Present a tensor-level PPO explanation and choose the continuous-control implementation to reuse.")],
       outputs=["Original PPO update with numerical checks.","Reference continuous-control run with pinned revision.","End-to-end task recording, including at least one blocked failure."],
       gate="The task pipeline and a continuous-action actor execute reliably. Fix integration or simplify the scene now; larger model training does not solve a broken interface.",
@@ -28,8 +30,8 @@ WEEKS = [
       days=[("Data and splits", "Define training, development/acquisition and held-out test layout IDs before collection. Generate a modest simulation demonstration set. Measure real reset/labeling time before committing to hardware episode counts."),
             ("Behavior cloning", "Train the nominal BC controller, save normalization statistics, and evaluate closed-loop rollouts. Inspect failure videos rather than choosing checkpoints from training loss alone."),
             ("Learn transitions", "Fit a small delta-state dynamics ensemble. Keep obstacle pose and relevant contact state observable. Validate one-step transitions on the development split."),
-            ("Read neural world models", "Trace Dreamer posterior/prior and actor training; inspect DINO-WM's action-conditioned feature prediction. Choose one feasible observation/model route using data access and measured runtime."),
-            ("Paired rollouts", "Compare 5/10/20-step model predictions with actual simulator execution from the same start and actions. Read RePLan's obstruction cases as behavior references, not as neural-world-model baselines."),
+            ("Read the predictive-model foundations", "Read PETS and PlaNet: trace ensemble trajectory sampling and the recurrent stochastic latent-state model. Survey RT-1, RT-2 and Open X-Embodiment to connect scaled robot policies with their datasets."),
+            ("Paired rollouts", "Compare 5/10/20-step model predictions with actual simulator execution from the same start and actions. Explain why a useful predictor must respond to changed actions, not only reconstruct the scene."),
             ("Architecture decision", "Freeze the core experiment interface and choose compact actor plus learned dynamics. Document the upgrade path to visual latents or a pretrained world-action model without making it a dependency.")],
       outputs=["Nominal BC checkpoint and dataset/split card.","Action-conditioned dynamics ensemble and multi-step error report.","Architecture decision with measured memory/runtime and explicit model-family labels."],
       gate="A usable nominal baseline and action-sensitive model predictions exist. If visual modeling is not viable, run the core diagnostic with state observations and label that limitation explicitly.",
@@ -38,39 +40,39 @@ WEEKS = [
       aim="Verify the model can support decisions and build the strongest simple alternative to policy fine-tuning.",
       days=[("Action-conditioned validity", "Test zero, permuted and deliberately colliding actions. Check whether prediction errors preserve or erase the obstacle. Add failure data only from training/development scenes."),
             ("CEM-MPC", "Implement receding-horizon search on the learned model. Log horizon, model calls, elapsed time and the action prefix executed. Keep exact simulator dynamics out of this baseline."),
-            ("Generative-policy mini-lab", "Implement the two-route action denoiser/flow example. Inspect Diffusion Policy and openpi interfaces; separate policy generation from world-model prediction."),
-            ("Read model failure carefully", "Read ReOI's obstacle erasure examples and ten-trial evaluation. Read RISE's policy-improvement loop and compute requirements. Record what these papers do not establish."),
+            ("Generative-policy mini-lab", "Begin the two-route action denoiser/flow example; finish it alongside the policy readings in Week 5. Separate policy generation from world-model prediction."),
+            ("Read imagination and model usage", "Read Dreamer and MBPO deeply. Contrast analytic actor learning through latent imagination with short synthetic replay rollouts. Survey DreamerV3 and TD-MPC2; label the variant your code implements."),
             ("Model and planner evaluation", "Run nominal and obstructed development trials. Compare frozen policy, random shooting and learned-model MPC. Identify whether failures are model, search or controller failures."),
             ("Gate 2 review", "Produce a short paired imagination/execution clip and a planner result. Set a small, measured adaptation-time budget and choose a residual actor implementation for Week 5.")],
       outputs=["A learned-world-model MPC baseline.","Paired predicted/executed blockage examples.","An explicit decision about whether the model is adequate for an imagined-training pilot."],
       gate="The model distinguishes important failed actions from successful ones on development scenes. If it cannot, improve data/representation before optimizing a policy against it.",
       explain="Why might a perfect-looking predicted video still be a poor training environment?"),
- dict(n=5, title="Implement the dream→update→execute loop", phase="Method", hours=[12,6,20,4], modules=["world-models","actor-critic","uncertainty"], labs=["imagination"], papers=["rise","fosp"],
+ dict(n=5, title="Implement the dream→update→execute loop", phase="Method", hours=[12,6,20,4], modules=["world-models","actor-critic","generative","uncertainty"], labs=["diffusion","imagination"], papers=["rise","fosp"],
       aim="Demonstrate genuine policy parameter adaptation from imagined experience, with a fixed model during each adaptation round.",
       days=[("Specify the update", "Define residual action bounds, replay mixture, rollout horizon, reward/cost terms and actor/critic update counts. Start every condition from the same base actor checkpoint."),
             ("Synthetic transitions", "Seed short model rollouts from actual development observations. Store predicted transitions in a separate buffer and tag model version, rollout depth and uncertainty."),
             ("Fine-tune the actor", "Implement the chosen SAC-style update using synthetic transitions and original replay. Check actor weight changes, model freezing and critic targets. Profile a complete update round."),
             ("Return to execution", "Run the adapted actor in the actual simulator, then hardware if the pipeline is ready. Compare measured success with its imagined estimate and save failure videos."),
-            ("Retention and limits", "Evaluate nominal scenes after adaptation. Test short versus longer imagined horizons. Keep every time limit or rollback in the results, rather than removing unsuccessful runs."),
+            ("Retention and VLA practice", "Evaluate nominal scenes after adaptation and preserve failed/time-capped runs. Allocate four research hours to the VLA practice: trace one OpenVLA/OFT or openpi observation/action interface, run supported inference if compute permits, and save the measured configuration."),
             ("Pilot interpretation", "Compare no adaptation, MPC and imagined fine-tuning on a small development suite. Write one page explaining whether the bottleneck is model fidelity, exploration, credit assignment or optimizer stability.")],
-      outputs=["A reproducible imagination-only actor update.","Measured adaptation latency and real/simulator outcome comparison.","A retention check and one documented failure case."],
+      outputs=["A reproducible imagination-only actor update.","Measured adaptation latency and a VLA inference/interface artifact with executed versus pending steps labeled.","A retention check and one documented failure case."],
       gate="At least one complete round executes and yields interpretable measurements. Improvement is a hypothesis, not a gate that justifies changing the test after seeing results.",
       explain="Where does the policy gradient or synthetic replay signal come from when the world model is frozen?"),
- dict(n=6, title="Add real verification and freeze the research question", phase="Method", hours=[10,6,22,4], modules=["uncertainty","systems"], labs=["acquisition"], papers=["fail2progress","resync"],
+ dict(n=6, title="Add real verification and freeze the research question", phase="Method", hours=[10,6,22,4], modules=["generative","world-models","uncertainty","systems"], labs=["acquisition"], papers=["fail2progress","resync"],
       aim="Finish the six-week preparation period with an honest pilot and a defensible experimental plan. Outreach has not started yet.",
       days=[("Detect and represent blockage", "Define stagnation/collision/progress checks on development data. Reobserve before adaptation; distinguish current latent-state inference from changing model weights."),
-            ("Generate candidates", "Build a legal correction-trial pool independent of held-out tests. Compare predicted outcomes across ensemble members and compute an initial disagreement score."),
+            ("Generate candidates and finish VLA practice", "Build the legal correction-trial pool and initial disagreement score. Allocate two research hours to a supported VLA adaptation smoke run or documented compute/data audit; verify trainable parameters and adapter reload when executed."),
             ("Verify physically", "Run a small random correction batch, add executed transitions, update the world model between rounds, then repeat imagined actor adaptation. Count reset and human time."),
-            ("Read related correction work", "Read Fail2Progress's targeted-data method and constrained-shelf qualitative result. Read ReSYNC's skill/concept learning and curriculum assumptions. Update the novelty matrix."),
+            ("Read and audit foundation models", "Read π₀ and Cosmos Policy deeply within the theory budget. Allocate four research hours to the Cosmos/world-action-model practice: select exact interfaces, run one documented capability when feasible, and check action conditioning and robot compatibility. Survey the original Cosmos platform, Cosmos 3 and LoRA."),
             ("Preregister comparisons", "Fix primary methods, budgets, seeds, evaluation layout IDs, success rubric, time caps and stopping rules. Narrow the claim if the pilot shows replanning is sufficient."),
             ("Gate 3 and private rehearsal", "Create a private 5–10 minute research presentation and a clean pilot demo. Finish the CV/project summary and target-role list; do not send outreach until Week 7.")],
-      outputs=["Complete adaptation + real-correction loop.","Frozen experiment protocol and literature/novelty matrix.","Private demo and interview presentation ready for the following week."],
+      outputs=["Complete adaptation + real-correction loop.","Frozen protocol, literature matrix and a preliminary Cosmos/world-action-model capability audit.","Private demo, VLA practice record and interview presentation ready for the following week."],
       gate="Decide the central claim from pilot evidence: faster recovery, better transfer/retention, or better budgeted model correction. If fine-tuning adds no benefit over MPC, report that and pivot to a justified narrower question.",
       explain="Why does your method need a few real trials, and which trials should it choose?"),
  dict(n=7, title="Start outreach and run the primary comparison", phase="Evidence", hours=[10,4,22,6], modules=["uncertainty","planning"], labs=["acquisition"], papers=["fail2progress","fosp"],
       aim="Begin researcher conversations after six full weeks while generating the first budget-matched results.",
       days=[("Outreach begins", "Prepare a concise CV, one-page research summary and preliminary demo. Identify five well-matched teams. Send a small, tailored first batch yourself; track feedback separately from research outcomes."),
-            ("Lock candidates and budgets", "Run active and random selection from the same candidate generator. Verify consistent scoring, legal reset states and real-trial accounting."),
+            ("Lock candidates and finish model audit", "Run active and random selection from the same candidate generator. Allocate two research hours to finish the foundation-model capability/latency audit. Make an explicit decision about a compatible large-model extension; keep the primary methods unchanged unless the protocol is versioned."),
             ("Primary methods, seed 1", "Evaluate frozen policy, same-model MPC, imagined adaptation and adaptation with random/active correction. Use the prespecified development/evaluation separation."),
             ("Primary methods, further seeds", "Repeat simulation runs with independent initializations and training seeds. Log compute and adaptation time. Run a limited hardware feasibility block where appropriate."),
             ("Coding and research mock", "Practice tensor/replay-buffer coding and a 10-minute project explanation. Explain the strongest baseline and what result would invalidate the method."),
@@ -82,7 +84,7 @@ WEEKS = [
       aim="Determine whether improvement transfers beyond the correction layouts and whether active selection actually beats random selection.",
       days=[("Held-out evaluation", "Evaluate the fixed methods on unseen blocker positions and orientations. Keep new geometries as a separately labeled harder split if feasible."),
             ("Budget curve", "Run nested correction budgets with matched checkpoints. Evaluate at each prespecified point without adding test data to training or choosing trial candidates."),
-            ("Repeat uncertainty estimates", "Collect independent simulation seeds and enough layout diversity to expose variability. Use bootstrap intervals at layout level; report per-layout outcomes."),
+            ("Repeat uncertainty estimates", "Collect independent simulation seeds and layout diversity; use layout-level intervals. Use the assigned ReOI/Fail2Progress deep reads and DreamZero/EVO-WAM surveys to update the evidence and novelty matrix rather than adding an unbounded reading backlog."),
             ("Hardware block", "Run randomized method-order trials with the same reset rubric. Measure operator time, aborted attempts and contact failures; do not infer broad reliability from a small demo."),
             ("Interviews and outreach", "Follow up on appropriate conversations and practice robotics/RL questions. Use preliminary results without presenting them as accepted publications."),
             ("Gate 4 review", "Compare active against random, imagined against executed improvement, and adaptation against MPC. Select the smallest set of ablations needed to explain the outcome.")],
@@ -134,3 +136,11 @@ WEEKS = [
       gate="The artifact exists and its claims can be inspected. Use the remaining calendar buffer for integration delays, interviews or a critical rerun—not an unplanned expansion.",
       explain="What did you learn that would change how a deployed robot should use its world model?"),
 ]
+
+# The schedule is the single source of truth for mandatory paper reading.
+# Related-work entries elsewhere are a shelf, not additional weekly obligations.
+for _week in WEEKS:
+    _reading = READING_SCHEDULE[_week['n']]
+    _week['papers'] = _reading['deep'] + _reading['survey']
+    _week['reading_hours'] = _reading['hours']
+    _week['model_practice_hours'] = {5: 4, 6: 6, 7: 2}.get(_week['n'], 0)
